@@ -5,7 +5,7 @@ import os
 book_routes = Blueprint("books", __name__)
 
 # Load the API key from an environment variable or hardcode it (not recommended for production)
-API_KEY = os.environ.get("GOOGLE_BOOKS_API_KEY", "AIzaSyBjzi13Hcj6T-lldQnDASDj42XrdMk8QYc")
+API_KEY = os.environ.get("GOOGLE_BOOKS_API_KEY", "API key goes here")
 
 @book_routes.route("/api/books", methods=["GET"])
 def get_bestsellers():
