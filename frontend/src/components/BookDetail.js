@@ -3,6 +3,14 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./BookDetail.css";
 
+// Utility function to clean text
+const cleanText = (text) => {
+  // Decode HTML entities and remove HTML tags
+  const parser = new DOMParser();
+  const decodedText = parser.parseFromString(text, "text/html").body.textContent || "";
+  return decodedText.replace(/<[^>]*>/g, ""); // Remove remaining HTML tags
+};
+
 const BookDetail = () => {
   const { id } = useParams(); // Get the book ID from the URL
   const [book, setBook] = useState(null);
@@ -37,6 +45,8 @@ const BookDetail = () => {
     return <p>Book not found. Please go back to the homepage.</p>;
   }
 
+  const description = book.volumeInfo.description;
+
   return (
     <div className="book-detail">
       <h2>{book.volumeInfo.title}</h2>
@@ -45,9 +55,21 @@ const BookDetail = () => {
         alt={book.volumeInfo.title}
         className="book-detail-image"
       />
-      <p><strong>Authors:</strong> {book.volumeInfo.authors?.join(", ")}</p>
-      <p><strong>Published Date:</strong> {book.volumeInfo.publishedDate}</p>
-      <p><strong>Description:</strong> {book.volumeInfo.description}</p>
+      <p>
+        <strong>Authors:</strong> {book.volumeInfo.authors?.join(", ") || "Unknown"}
+      </p>
+      <p>
+        <strong>Published Date:</strong> {book.volumeInfo.publishedDate || "Not available"}
+      </p>
+      <div>
+        <h3>Description:</h3>
+        {description ? (
+          // Clean and display the description
+          <p>{cleanText(description)}</p>
+        ) : (
+          <p>No description available.</p>
+        )}
+      </div>
 
       <form className="review-form">
         <h3>Have you read this book? Submit a Review!</h3>

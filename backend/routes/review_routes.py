@@ -29,3 +29,6 @@ def get_user_reviews():
     reviews = cursor.fetchall()
     conn.close()
     return jsonify(reviews)
+
+
+    
