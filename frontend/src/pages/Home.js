@@ -16,13 +16,17 @@ const Home = () => {
         const [newReleasesResponse, topRatedResponse, editorsPicksResponse] = await Promise.all([
           axios.get('http://127.0.0.1:5000/api/books?query=new_releases'),
           axios.get('http://127.0.0.1:5000/api/books?query=top_rated'),
-          axios.get('http://127.0.0.1:5000/api/books?query=editors_picks')
+          axios.get('http://127.0.0.1:5000/api/books?query=editors_picks'),
         ]);
   
-        // Extract items property from the response
-        setNewReleases(newReleasesResponse.data.items || []);
-        setTopRated(topRatedResponse.data.items || []);
-        setEditorsPicks(editorsPicksResponse.data.items || []);
+        setNewReleases(newReleasesResponse.data || []);
+        setTopRated(topRatedResponse.data || []);
+        setEditorsPicks(editorsPicksResponse.data || []);
+  
+        // Log updated state
+        // console.log("Updated New Releases State:", newReleases);
+        // console.log("Updated Top Rated State:", topRated);
+        // console.log("Updated Editor's Picks State:", editorsPicks);
       } catch (error) {
         console.error("Error fetching books:", error);
       }
