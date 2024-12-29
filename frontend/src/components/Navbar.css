@@ -1,0 +1,74 @@
+/* Navbar Container */
+.navbar {
+  width: 100%; /* Full width */
+  display: flex; /* Flexbox for alignment */
+  justify-content: space-between; /* Space between left and right sections */
+  align-items: center; /* Vertically align items */
+  background-color: #556b2f; /* Background color */
+  color: white;
+  padding: 5px 20px; /* Space inside the navbar */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Arial', sans-serif;
+  position: fixed; /* Fix the navbar at the top */
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensure it stays above other content */
+  box-sizing: border-box; /* Include padding in width calculations */
+}
+
+/* Left Section (Home Button) */
+.navbar-left .navbar-logo {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.navbar-left .navbar-logo:hover {
+  color: #dcdcdc;
+}
+
+/* Right Section (Login/Signup Buttons) */
+.navbar-right {
+  display: flex; /* Flexbox for horizontal layout */
+  gap: 15px; /* Space between buttons */
+  margin-left: auto; /* Push buttons to the far right */
+}
+
+/* User Greeting */
+.navbar-user {
+  font-size: 1em;
+  margin-right: 15px;
+}
+
+/* Buttons */
+.navbar-button {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 5px 10px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar-button:hover {
+  background-color: white;
+  color: #556b2f;
+  text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column; /* Stack items vertically on small screens */
+    align-items: flex-start;
+  }
+
+  .navbar-right {
+    margin-top: 10px;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px;
+  }
+}

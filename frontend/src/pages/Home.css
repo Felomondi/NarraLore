@@ -1,0 +1,86 @@
+/* Home Page Container */
+.homepage-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f3ed;
+    color: #333;
+  }
+  
+  /* Section Title */
+  .homepage-container h1 {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+  }
+  
+  /* Books Grid Layout */
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    justify-items: center;
+  }
+  
+  /* Individual Book Card */
+  .book-card {
+    background: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 200px;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Book Image */
+/* Book Image Styling */
+.book-image {
+    display: block; /* Ensures the image is treated as a block element */
+    max-width: 100%; /* Ensures the image fits within the card */
+    height: auto; /* Maintains aspect ratio */
+    border: none; /* Removes any borders around the image */
+    background: none; /* Removes any background color */
+    box-shadow: none; /* Ensures no shadow is applied */
+  }
+  
+  /* Book Title */
+  .book-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #2c3e50;
+  }
+  
+  /* Book Genre */
+  .book-genre {
+    font-size: 0.9em;
+    color: #7f8c8d;
+  }
+  
+  /* Book Year */
+  .book-year {
+    font-size: 0.85em;
+    color: #95a5a6;
+  }
+  
+  /* Book Author */
+  .book-author {
+    font-size: 0.9em;
+    color: #3498db;
+  }
+body {
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    box-sizing: border-box; /* Ensure padding is included in width calculations */
+  }
+  
+html {
+    height: 100%; /* Ensure the page height spans the viewport */
+  }
