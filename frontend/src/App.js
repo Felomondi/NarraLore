@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Home from "./pages/Home";
 import BookDetail from "./components/BookDetail";
+import Profile from "./pages/Profile";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -22,9 +23,11 @@ function App() {
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login setUser={setUser} />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/book/:id" element={<BookDetail />} /> {/* Dynamic Route */}
+            
           </Routes>
         </div>
         <Footer />
