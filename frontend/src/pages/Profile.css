@@ -1,0 +1,141 @@
+/* Profile Container */
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Greeting Message */
+.profile-container h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #556b2f;
+}
+
+/* Profile Picture */
+.profile-picture {
+    margin: 20px auto;
+}
+
+.profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #556b2f;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.profile-picture img:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Profile Info */
+.profile-info {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #333;
+    line-height: 1.6;
+    text-align: left; /* Align text to the left for readability */
+    padding: 0 10px;
+}
+
+.profile-info p {
+    margin: 10px 0;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Reviews Section */
+.profile-reviews {
+    margin-top: 40px;
+}
+
+.profile-reviews h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #556b2f;
+    padding-bottom: 5px;
+    text-align: left; /* Align section header to the left */
+    padding-left: 10px;
+}
+
+/* Review Cards */
+.review-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.review-card p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 1em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 15px;
+    }
+
+    .profile-picture img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile-info {
+        font-size: 1em;
+        text-align: center; /* Center-align text on smaller screens */
+    }
+
+    .profile-reviews h3 {
+        font-size: 1.3em;
+        text-align: center;
+        padding-left: 0;
+    }
+
+    .review-card {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 10px;
+    }
+
+    .profile-picture img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-info {
+        font-size: 0.9em;
+    }
+
+    .profile-reviews h3 {
+        font-size: 1.2em;
+    }
+
+    .review-card {
+        padding: 10px;
+        font-size: 0.85em;
+    }
+}

@@ -1,89 +1,77 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from 'react-router-dom';
-import './Home.css';
+import { Link } from "react-router-dom";
+import "./Home.css";
+
+const categories = [
+  { title: "New Releases", query: "new_releases" },
+  { title: "Top Rated", query: "top_rated" },
+  { title: "Editor's Picks", query: "editors_picks" },
+  { title: "Science Fiction", query: "science_fiction" },
+  { title: "Romance", query: "romance" },
+  { title: "Biographies", query: "biographies" },
+];
 
 const Home = () => {
-  const [newReleases, setNewReleases] = useState([]);
-  const [topRated, setTopRated] = useState([]);
-  const [editorsPicks, setEditorsPicks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+  const [booksByCategory, setBooksByCategory] = useState({});
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchBooksByCategory = async () => {
       try {
-        const [newReleasesResponse, topRatedResponse, editorsPicksResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:5000/api/books?query=new_releases'),
-          axios.get('http://127.0.0.1:5000/api/books?query=top_rated'),
-          axios.get('http://127.0.0.1:5000/api/books?query=editors_picks'),
-        ]);
-  
-        setNewReleases(newReleasesResponse.data || []);
-        setTopRated(topRatedResponse.data || []);
-        setEditorsPicks(editorsPicksResponse.data || []);
-  
-        // Log updated state
-        // console.log("Updated New Releases State:", newReleases);
-        // console.log("Updated Top Rated State:", topRated);
-        // console.log("Updated Editor's Picks State:", editorsPicks);
+        const promises = categories.map((category) =>
+          axios.get(`http://127.0.0.1:5000/api/books?query=${category.query}`)
+        );
+
+        const responses = await Promise.all(promises);
+
+        // Map responses to category titles
+        const booksData = responses.reduce((acc, response, index) => {
+          acc[categories[index].title] = response.data || [];
+          return acc;
+        }, {});
+
+        setBooksByCategory(booksData);
       } catch (error) {
-        console.error("Error fetching books:", error);
+        console.error("Error fetching books by category:", error);
       }
     };
-  
-    fetchBooks();
+
+    fetchBooksByCategory();
   }, []);
 
   return (
     <div className="homepage-container">
       <h1>Book Critique</h1>
-
-      <h2>New Releases</h2>
-      <div className="books-grid">
-        {newReleases.length > 0 ? (
-          newReleases.map((book) => (
-            <Link to={`/book/${book.id}`} key={book.id} className="book-card">
-              <img src={book.volumeInfo.imageLinks?.thumbnail} alt={book.volumeInfo.title} />
-              <h3>{book.volumeInfo.title}</h3>
-              <p>{book.volumeInfo.authors?.join(', ')}</p>
-            </Link>
-          ))
-        ) : (
-          <p>No new releases available</p>
-        )}
-      </div>
-
-      <h2>Top Rated</h2>
-      <div className="books-grid">
-        {topRated.length > 0 ? (
-          topRated.map((book) => (
-            <Link to={`/book/${book.id}`} key={book.id} className="book-card">
-              <img src={book.volumeInfo.imageLinks?.thumbnail} alt={book.volumeInfo.title} />
-              <h3>{book.volumeInfo.title}</h3>
-              <p>{book.volumeInfo.authors?.join(', ')}</p>
-            </Link>
-          ))
-        ) : (
-          <p>No top rated books available</p>
-        )}
-      </div>
-
-      <h2>Editor's Picks</h2>
-      <div className="books-grid">
-        {editorsPicks.length > 0 ? (
-          editorsPicks.map((book) => (
-            <Link to={`/book/${book.id}`} key={book.id} className="book-card">
-              <img src={book.volumeInfo.imageLinks?.thumbnail} alt={book.volumeInfo.title} />
-              <h3>{book.volumeInfo.title}</h3>
-              <p>{book.volumeInfo.authors?.join(', ')}</p>
-            </Link>
-          ))
-        ) : (
-          <p>No editor's picks available</p>
-        )}
-      </div>
-    </div>);
+      {categories.map((category) => (
+        <div key={category.title} className="category-section">
+          <h2>{category.title}</h2>
+          <div className="books-grid">
+            {booksByCategory[category.title]?.length > 0 ? (
+              booksByCategory[category.title].map((book) => (
+                <Link
+                  to={`/book/${book.id}`}
+                  key={book.id}
+                  className="book-card"
+                >
+                  <img
+                    src={
+                      book.volumeInfo.imageLinks?.thumbnail ||
+                      "https://via.placeholder.com/150"
+                    }
+                    alt={book.volumeInfo.title}
+                  />
+                  <h3>{book.volumeInfo.title}</h3>
+                  <p>{book.volumeInfo.authors?.join(", ") || "Unknown Author"}</p>
+                </Link>
+              ))
+            ) : (
+              <p>No books available in this category</p>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default Home;
