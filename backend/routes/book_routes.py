@@ -35,3 +35,4 @@ def get_book_details(book_id):
         return jsonify(book)
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Failed to fetch book details: {str(e)}"}), 404
+    

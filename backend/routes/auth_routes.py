@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
-from werkzeug.security import generate_password_hash
-from flask_jwt_extended import JWTManager, create_access_token
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from utils.db import get_db_connection
-import mysql.connector
 
 auth_routes = Blueprint("auth", __name__)
 
@@ -25,8 +23,7 @@ def register():
 
         # Check if username or email already exists
         cursor.execute("SELECT * FROM users WHERE username = %s OR email = %s", (username, email))
-        existing_user = cursor.fetchone()
-        if existing_user:
+        if cursor.fetchone():
             return jsonify({"error": "Username or email already exists"}), 409
 
         # Insert new user
@@ -49,7 +46,6 @@ def login():
     email = data.get("email")
     password = data.get("password")
 
-    print("Login attempt with email:", email)  # Log the incoming email
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
 
@@ -60,18 +56,42 @@ def login():
         # Fetch user details by email
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = cursor.fetchone()
-        print("Fetched user:", user)  # Log fetched user data
 
         if user and check_password_hash(user["password_hash"], password):
-            token = create_access_token(identity=user["id"])
-            print("Login successful for user:", user["username"])  # Log success
-            return jsonify({"token": token, "user": {"id": user["id"], "username": user["username"]}})
+            token = create_access_token(identity=str(user["id"]))  # Ensure ID is a string
+            return jsonify({"token": token, "user": {"id": str(user["id"]), "username": user["username"]}})
         else:
-            print("Invalid credentials for email:", email)  # Log invalid login attempt
             return jsonify({"error": "Invalid email or password"}), 401
     except Exception as e:
-        print("Error during login:", str(e))  # Log the exception
         return jsonify({"error": "Server error: " + str(e)}), 500
     finally:
         cursor.close()
         connection.close()
+
+
+@auth_routes.route("/api/profile", methods=["GET"])
+@jwt_required()
+def get_profile():
+    try:
+        # Extract the user ID from the token
+        user_id = get_jwt_identity()
+
+        if not isinstance(user_id, str):
+            return jsonify({"msg": "Invalid token format: user_id must be a string"}), 422
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Fetch user details
+        cursor.execute("SELECT id, username, email FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify({"user": user})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()

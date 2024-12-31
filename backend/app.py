@@ -12,6 +12,7 @@ def home():
 
 CORS(app)
 app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 jwt = JWTManager(app)
 
