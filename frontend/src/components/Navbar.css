@@ -4,8 +4,8 @@
   display: flex; /* Flexbox for alignment */
   justify-content: space-between; /* Space between left and right sections */
   align-items: center; /* Vertically align items */
-  background-color: #556b2f; /* Background color */
-  color: white;
+  background-color: #c9981c; /* Background color */
+  color: black;
   padding: 10px 20px; /* Space inside the navbar */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-family: 'Arial', sans-serif;
@@ -18,14 +18,14 @@
 
 /* Left Section (Home Button) */
 .navbar-left .navbar-logo {
-  color: white;
+  color: black;
   text-decoration: none;
-  font-size: 1.2em;
+  font-size: 1.7em;
   font-weight: bold;
 }
 
 .navbar-left .navbar-logo:hover {
-  color: #dcdcdc;
+  color: black;
 }
 
 /* Right Section (Buttons & Greeting) */
@@ -46,7 +46,7 @@
 /* Buttons */
 .navbar-button {
   background-color: transparent;
-  color: white;
+  color: black;
   border: 1px solid white;
   border-radius: 4px;
   padding: 5px 10px;

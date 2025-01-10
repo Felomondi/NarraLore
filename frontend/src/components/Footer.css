@@ -1,57 +1,58 @@
 /* Footer Container */
 .footer {
-    width: 100%; /* Full width */
-    background-color: #556b2f;
-    color: #ecf0f1;
-    padding: 40px 20px;
-    text-align: center;
-    bottom: 0;
-    left: 0;
-    z-index: 1000; /* Ensure it stays above content */
-    box-sizing: border-box; /* Include padding in width */
-    margin: 0; /* Remove any default margins */
-  }
-  
-  /* Footer Content */
-  .footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  /* Footer Section */
-  .footer-section {
-    flex: 1 1 30%;
-    margin: 10px 0;
-    text-align: left;
-  }
-  
-  /* Social Icons */
-  .social-icons a {
-    color: #ecf0f1;
-    font-size: 1.2em;
-    margin-right: 10px;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-  
-  .social-icons a:hover {
-    color: #3498db;
-  }
-  
-  /* Footer Bottom */
-  .footer-bottom {
-    margin-top: 20px;
-    font-size: 0.9em;
-    border-top: 1px solid #7f8c8d;
-    padding-top: 10px;
-  }
-  
-  /* Ensure Footer Covers Full Width and No White Space */
-  body, html {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-  }
+  width: 100%; /* Full width */
+  background-color: #c9981c; /* Background color */
+  color: #000; /* Change text color to black */
+  padding: 40px 20px;
+  text-align: center;
+  bottom: 0;
+  left: 0;
+  z-index: 1000; /* Ensure it stays above content */
+  box-sizing: border-box; /* Include padding in width */
+  margin: 0; /* Remove any default margins */
+}
+
+/* Footer Content */
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Footer Section */
+.footer-section {
+  flex: 1 1 30%;
+  margin: 10px 0;
+  text-align: left;
+}
+
+/* Social Icons */
+.social-icons a {
+  color: #000; /* Change icon color to black */
+  font-size: 1.2em;
+  margin-right: 10px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #3498db; /* Keep hover effect */
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  margin-top: 20px;
+  font-size: 0.9em;
+  border-top: 1px solid #7f8c8d;
+  padding-top: 10px;
+  color: #000; /* Change bottom text color to black */
+}
+
+/* Ensure Footer Covers Full Width and No White Space */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}

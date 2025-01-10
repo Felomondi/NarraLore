@@ -8,7 +8,7 @@ const Navbar = ({ user, onLogout }) => {
       {/* Left Section: Home */}
       <div className="navbar-left">
         <Link to="/" className="navbar-logo">
-          NarraLore
+          LitLore
         </Link>
       </div>
 
