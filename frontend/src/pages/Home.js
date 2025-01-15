@@ -6,7 +6,7 @@ import "./Home.css";
 // Define all categories
 const categories = [
   { title: "New Releases", query: "new_releases" },
-  { title: "Top Rated", query: "top_rated" },
+  // { title: "Top Rated", query: "top_rated" },
   // { title: "Editor's Picks", query: "editors_picks" },
   { title: "Science Fiction", query: "science_fiction" },
   { title: "Romance", query: "romance" },
@@ -16,9 +16,9 @@ const categories = [
   // { title: "History", query: "history" },
   // { title: "Self-Help", query: "self_help" },
   // { title: "Business & Economics", query: "business" },
-  { title: "Health & Fitness", query: "health" },
+  // { title: "Health & Fitness", query: "health" },
   // { title: "Travel", query: "travel" },
-  { title: "Comics & Graphic Novels", query: "comics" },
+  // { title: "Comics & Graphic Novels", query: "comics" },
   // { title: "Cookbooks", query: "cooking" },
   // { title: "Children's Books", query: "children" },
   // { title: "Poetry", query: "poetry" },
@@ -32,7 +32,7 @@ const Home = () => {
     const fetchBooksByCategory = async () => {
       try {
         const promises = categories.map((category) =>
-          axios.get(`http://127.0.0.1:5000/api/books?query=${category.query}&maxResults=20`)
+          axios.get(`http://127.0.0.1:5000/api/books?query=${category.query}&maxResults=10`)
         );
 
         const responses = await Promise.all(promises);
