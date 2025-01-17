@@ -1,6 +1,6 @@
-/* Navbar Container */
 .navbar {
-  width: 100%; /* Full width */
+  width: calc(100% - 210px); /* Adjust width to exclude Sidebar width */
+  margin-left: 210px; /* Start where Sidebar ends */
   display: flex; /* Flexbox for alignment */
   justify-content: space-between; /* Space between left and right sections */
   align-items: center; /* Vertically align items */
@@ -11,9 +11,9 @@
   font-family: 'Arial', sans-serif;
   position: fixed; /* Fix the navbar at the top */
   top: 0;
-  left: 0;
   z-index: 1000; /* Ensure it stays above other content */
   box-sizing: border-box; /* Include padding in width calculations */
+  transition: all 0.3s ease; /* Smooth transitions for layout changes */
 }
 
 /* Left Section (Home Button) */
@@ -62,9 +62,21 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .navbar {
+    width: 100%; /* Take up full width */
+    margin-left: 0; /* Adjust for collapsed Sidebar */
+    padding: 10px 15px; /* Adjust padding */
+  }
+
+  .navbar-left .navbar-logo {
+    font-size: 1.5em; /* Slightly smaller logo */
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column; /* Stack items vertically on small screens */
+    flex-direction: column; /* Stack navbar items vertically */
     align-items: flex-start;
     padding: 10px; /* Adjust padding */
   }
@@ -83,6 +95,42 @@
   }
 
   .navbar-user {
-    margin-right: 0; /* Remove right margin on smaller screens */
+    margin-right: 0; /* Remove right margin */
+  }
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column; /* Stack navbar items vertically */
+    align-items: center; /* Center align all items */
+    padding: 10px; /* Adjust padding */
+  }
+
+  .navbar-left {
+    width: 100%;
+    text-align: center; /* Center the logo or home button */
+  }
+
+  .navbar-right {
+    display: flex; /* Ensure the buttons remain visible */
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px;
+    width: 100%; /* Take full width */
+    align-items: center; /* Center align the buttons */
+  }
+
+  .navbar-user {
+    margin: 0; /* Adjust margin to fit smaller layouts */
+    font-size: 1em; /* Adjust font size for better readability */
+  }
+
+  .navbar-button {
+    width: 80%; /* Make buttons take up most of the width */
+    text-align: center; /* Center the button text */
+  }
+
+  .navbar-toggle {
+    display: none; /* Remove the toggle button if unnecessary */
   }
 }
