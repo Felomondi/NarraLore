@@ -2,28 +2,20 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 
-const Navbar = ({ user, onLogout }) => {
+const Navbar = ({ user }) => {
   return (
     <nav className="navbar">
-      {/* Left Section: Home */}
+      {/* Left Section: Logo or Title */}
       <div className="navbar-left">
         <Link to="/" className="navbar-logo">
           LitLore
         </Link>
       </div>
 
-      {/* Right Section: User Info & Actions */}
+      {/* Right Section: Buttons */}
       <div className="navbar-right">
         {user ? (
-          <>
-            <span className="navbar-user">Welcome, {user.username}</span>
-            <Link to="/profile" className="navbar-button">
-              Profile
-            </Link>
-            <button className="navbar-button" onClick={onLogout}>
-              Sign Out
-            </button>
-          </>
+          <span className="navbar-user">Welcome, {user.username}</span>
         ) : (
           <>
             <Link to="/login" className="navbar-button">
