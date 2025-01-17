@@ -1,86 +1,95 @@
 /* Sidebar Container */
 .sidebar {
-    width: 210px; /* Fixed width for the sidebar */
-    height: 100vh; /* Full height of the viewport */
-    background-color: #ffffff; /* Panel color */
+    width: 210px;
+    height: 100vh;
+    background-color: #ffffff;
     color: black;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0; /* Remove extra padding to align the logo properly */
+    padding: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    position: fixed; /* Sidebar stays fixed on the left */
+    position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000; /* Ensure it stays on top */
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Adjust spacing to account for the toggle button */
+  .sidebar-nav {
+    width: 100%;
+    margin-top: 20px; /* Space below the logo */
+    padding-top: 60px; /* Add padding to ensure no overlap with toggle */
   }
   
   /* Sidebar Logo Section */
   .sidebar-logo {
-    width: 100%; /* Full width for the sidebar */
-    height: 150px; /* Fixed height for the logo section */
+    width: 100%;
+    height: 80px; /* Adjust height for proper sizing */
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #ffffff; /* Optional: Background for the logo section */
-    overflow: hidden; /* Ensure the image doesn’t overflow */
-    margin-bottom: 20px; /* Space below the logo section */
-  }
-
-  .logout-button {
-    background: none;
-    border: none;
-    color: black;
-    text-align: left;
-    width: 100%;
-    padding: 15px 20px;
-    cursor: pointer;
-    font-size: 1em;
-    display: flex;
-    align-items: center;
+    margin-bottom: 20px;
   }
   
-  .logout-button:hover {
-    background-color: #e89f2e;
-    color: white;
-  }
-  
-  /* Sidebar Logo Image */
   .sidebar-logo-image {
-    width: 100%; /* Full width of the sidebar */
-    height: 100%; /* Full height of the logo section */
-    object-fit: cover; /* Ensures the image covers the area without distortion */
-  }
-  
-  /* Sidebar Logo Text */
-  .sidebar-logo-text {
-    display: none; /* Hide the text since the image covers the entire section */
-  }
-  
-  /* Sidebar Navigation */
-  .sidebar-nav {
-    width: 100%; /* Full width for the nav links */
-    margin-top: 20px; /* Add some spacing from the logo */
+    width: 80%; /* Make the logo fit inside the sidebar */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensure no distortion */
   }
   
   .sidebar-link {
     display: flex;
     align-items: center;
-    font-size: 1.0em;
+    font-size: 1em;
     color: black;
     text-decoration: none;
     padding: 15px 20px;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
   .sidebar-link:hover {
-    background-color: #e89f2e; /* Highlight color on hover */
+    background-color: #e89f2e;
     color: white;
-    cursor: pointer;
   }
   
   .sidebar-icon {
     margin-right: 10px;
-    font-size: 1.0em;
+  }
+  
+  /* Toggle Button */
+  .sidebar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: black;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar-toggle {
+      display: block; /* Show toggle button on small screens */
+      margin-left: 10px;
+      font-size: 1.7em;
+    }
+  
+    .sidebar {
+      transform: translateX(-100%); /* Initially hidden */
+    }
+  
+    .sidebar.open {
+      transform: translateX(0); /* Show sidebar */
+    }
+  
+    .sidebar-nav {
+      padding-top: 80px; /* Ensure links are visible below the toggle */
+    }
   }

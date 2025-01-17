@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import "./Sidebar.css";
 import logo from "./logo.png";
 
-const Sidebar = ({ user, onLogout }) => {
+const Sidebar = ({ isOpen, isSmallScreen, user, onLogout }) => {
   return (
-    <div className="sidebar">
-      <div className="sidebar-logo">
-        <img src={logo} alt="Logo" className="sidebar-logo-image" />
-      </div>
-
+    <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
+      {!isSmallScreen && (
+        <div className="sidebar-logo">
+          <img src={logo} alt="Logo" className="sidebar-logo-image" />
+        </div>
+      )}
       <nav className="sidebar-nav">
         <Link to="/" className="sidebar-link">
           <i className="fas fa-home sidebar-icon"></i>

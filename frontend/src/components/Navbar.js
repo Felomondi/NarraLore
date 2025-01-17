@@ -1,18 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
+import logo from "./logo.png"; // Import the logo
 
-const Navbar = ({ user }) => {
+const Navbar = ({ user, toggleSidebar, isSmallScreen }) => {
   return (
     <nav className="navbar">
-      {/* Left Section: Logo or Title */}
+      {/* Left Section: Sidebar Toggle */}
       <div className="navbar-left">
-        <Link to="/" className="navbar-logo">
-          LitLore
-        </Link>
+        <button className="navbar-toggle" onClick={toggleSidebar}>
+          <i className="fas fa-bars"></i> {/* FontAwesome for the menu icon */}
+        </button>
+        {isSmallScreen && (
+          <img src={logo} alt="Logo" className="navbar-logo" /> // Display logo on smaller screens
+        )}
       </div>
 
-      {/* Right Section: Buttons */}
+      {/* Right Section: User Info */}
       <div className="navbar-right">
         {user ? (
           <span className="navbar-user">Welcome, {user.username}</span>

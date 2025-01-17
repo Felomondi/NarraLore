@@ -1,7 +1,17 @@
 /* General container styling */
 .homepage-container {
-  padding: 20px;
-  margin-top: 40px;
+  margin-top: 3rem;    /* Keep 50px, remove the 40px line below */
+  margin-left: 13rem; 
+  padding: 1.25rem;
+  transition: margin-left 0.3s ease; 
+}
+
+/* For smaller devices where sidebar is toggleable/overlay */
+@media (max-width: 768px) {
+  .homepage-container {
+    margin-left: 0; /* Remove offset on small screens */
+    margin-top: 60px;
+  }
 }
 
 .homepage-container h1 {
