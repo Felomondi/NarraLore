@@ -1,44 +1,32 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState} from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Home.css";
 
-// Define all categories
 const categories = [
-  { title: "New Releases", query: "new_releases" },
-  // { title: "Top Rated", query: "top_rated" },
-  // { title: "Editor's Picks", query: "editors_picks" },
-  { title: "Science Fiction", query: "science_fiction" },
+  // { title: "New Releases", query: "new_releases" },
+  // { title: "Science Fiction", query: "science_fiction" },
   { title: "Romance", query: "romance" },
-  // { title: "Biographies", query: "biography" },
-  { title: "Mystery & Thriller", query: "mystery" },
-  { title: "Fantasy", query: "fantasy" },
-  // { title: "History", query: "history" },
-  // { title: "Self-Help", query: "self_help" },
-  // { title: "Business & Economics", query: "business" },
-  // { title: "Health & Fitness", query: "health" },
-  // { title: "Travel", query: "travel" },
-  // { title: "Comics & Graphic Novels", query: "comics" },
-  // { title: "Cookbooks", query: "cooking" },
-  // { title: "Children's Books", query: "children" },
-  // { title: "Poetry", query: "poetry" },
+  // { title: "Mystery & Thriller", query: "mystery" },
+  // { title: "Fantasy", query: "fantasy" },
 ];
 
 const Home = () => {
   const [booksByCategory, setBooksByCategory] = useState({});
-  const refs = useRef({}); // Store refs for each category
+  const [selfHelpBooks, setSelfHelpBooks] = useState([]);
 
   useEffect(() => {
     const fetchBooksByCategory = async () => {
       try {
         const promises = categories.map((category) =>
-          axios.get(`http://127.0.0.1:5000/api/books?query=${category.query}&maxResults=10`)
+          axios.get(
+            `http://127.0.0.1:5000/api/books?query=${category.query}&maxResults=10`
+          )
         );
 
         const responses = await Promise.all(promises);
 
         const booksData = responses.reduce((acc, response, index) => {
-          console.log(`Category: ${categories[index].title}`, response.data);
           acc[categories[index].title] = response.data || [];
           return acc;
         }, {});
@@ -49,65 +37,99 @@ const Home = () => {
       }
     };
 
-    fetchBooksByCategory();
-  }, []);
+    const fetchSelfHelpBooks = async () => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:5000/api/books?query=self_help&maxResults=6`
+        );
+        setSelfHelpBooks(response.data || []);
+      } catch (error) {
+        console.error("Error fetching Self-Help books:", error);
+      }
+    };
 
-  const scrollHorizontally = (categoryTitle, direction) => {
-    const ref = refs.current[categoryTitle];
-    if (ref && ref.scrollBy) {
-      ref.scrollBy({
-        left: direction === "left" ? -500 : 500, // Adjust scroll distance as needed
-        behavior: "smooth",
-      });
-    } else {
-      console.error(`Ref not found or invalid for category: ${categoryTitle}`);
-    }
-  };
+    fetchBooksByCategory();
+    fetchSelfHelpBooks();
+  }, []);
 
   return (
     <div className="homepage-container">
-      <h1>Book Critique</h1>
+      {/* Tablet Mockup Section */}
+      <div className="tablet-mockup">
+        <div className="tablet-screen">
+          <div className="mockup-header">
+            <h1>Hi, Welcome to LitLore.</h1>
+            <h2>Unlock the World of Reading with LitLore!</h2>
+            <p>
+              <span className="benefit">📚 Access a vast collection of free books.</span>
+              <span className="benefit">🎧 Enjoy hands-free reading with our TTS models.</span>
+              <span className="benefit">🚀 Boost your productivity effortlessly.</span>
+            </p>
+            <button className="cta-button">Start Reading</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Self-Help Section */}
+      <div className="self-help-section">
+        <div className="self-help-header">
+          <h2> <i className="fas fa-leaf"></i> Popular Self-Help Books</h2>
+        </div>
+        <div className="self-help-grid">
+          {selfHelpBooks.length > 0 ? (
+            selfHelpBooks.map((book) => (
+              <Link
+                to={`/book/${book.id}`} // Redirects to the book details page
+                key={book.id}
+                className="self-help-card"
+              >
+                <img
+                  src={
+                    book.volumeInfo.imageLinks?.thumbnail ||
+                    "https://via.placeholder.com/150"
+                  }
+                  alt={book.volumeInfo.title}
+                />
+                <div className="self-help-card-content">
+                  <h3>{book.volumeInfo.title}</h3>
+                  <p>{book.volumeInfo.authors?.join(", ")}</p>
+                  <div className="self-help-rating">
+                    <span>⭐ {book.volumeInfo.averageRating || "N/A"}</span>
+                    <span>👍 {book.volumeInfo.ratingsCount || 0}</span>
+                  </div>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <p>No Self-Help books available</p>
+          )}
+        </div>
+      </div>
+
+      {/* Other Categories */}
       {categories.map((category) => (
         <div key={category.title} className="category-section">
           <h2>{category.title}</h2>
-          <div className="scroll-buttons">
-            <button
-              className="scroll-button left"
-              onClick={() => scrollHorizontally(category.title, "left")}
-            >
-              &#8249;
-            </button>
-            <div
-              ref={(el) => (refs.current[category.title] = el)} // Attach ref to each category grid
-              className="books-grid"
-            >
-              {booksByCategory[category.title]?.length > 0 ? (
-                booksByCategory[category.title].map((book) => (
-                  <Link
-                    to={`/book/${book.id}`}
-                    key={book.id}
-                    className="book-card"
-                  >
-                    <img
-                      src={
-                        book.volumeInfo.imageLinks?.thumbnail ||
-                        "https://via.placeholder.com/150"
-                      }
-                      alt={book.volumeInfo.title}
-                    />
-                    {/* <h3>{book.volumeInfo.title}</h3> */}
-                  </Link>
-                ))
-              ) : (
-                <p>No books available in this category</p>
-              )}
-            </div>
-            <button
-              className="scroll-button right"
-              onClick={() => scrollHorizontally(category.title, "right")}
-            >
-              &#8250;
-            </button>
+          <div className="books-grid">
+            {booksByCategory[category.title]?.length > 0 ? (
+              booksByCategory[category.title].map((book) => (
+                <Link
+                  to={`/book/${book.id}`}
+                  key={book.id}
+                  className="book-card"
+                >
+                  <img
+                    src={
+                      book.volumeInfo.imageLinks?.thumbnail ||
+                      "https://via.placeholder.com/150"
+                    }
+                    alt={book.volumeInfo.title}
+                  />
+                </Link>
+              ))
+            ) : (
+              <p>No books available in this category</p>
+            )}
           </div>
         </div>
       ))}

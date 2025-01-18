@@ -43,7 +43,7 @@
 
 /* Use max-width and auto height for fluid images */
 .footer-logo-image {
-  max-width: 60px; 
+  max-width: 100px; 
   height: auto;
   object-fit: contain; /* Ensure no distortion */
 }

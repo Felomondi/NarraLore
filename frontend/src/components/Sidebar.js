@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
-import logo from "./logo.png";
+import logo from "../assets/logo.png";
 
 const Sidebar = ({ isOpen, isSmallScreen, user, onLogout }) => {
   return (
