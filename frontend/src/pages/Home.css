@@ -15,10 +15,13 @@
 }
 
 .homepage-container h1 {
-  font-size: 2.5em;
+  font-size: 3.0em;
   margin: 20px;
   text-align: center;
-  color: #333;
+  color: #000000;
+  font-weight: bold;
+  letter-spacing: 1px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Category section */
@@ -114,4 +117,171 @@
 .book-card p {
   font-size: 0.9em;
   color: #666;
+}
+
+/* Tablet Mockup */
+.tablet-mockup {
+  width: 95%;
+  margin: 20px auto 40px auto; /* Centered with space above and below */
+  background-color: #eda31a;
+  border-radius: 20px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.tablet-screen {
+  background-color: #eda31a;
+  border-radius: 30px;
+  padding: 20px;
+}
+
+/* Header Section */
+.mockup-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mockup-header h1 {
+  font-size: 3.0em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.mockup-header h2 {
+  font-size: 1.6em;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.mockup-header p {
+  font-size: 1.1em;
+  color: #222;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+/* Individual Benefit Styling */
+.benefit {
+  display: block; /* Each benefit on a new line */
+  margin-bottom: 10px; /* Space between benefits */
+}
+
+/* Call-to-Action Button */
+.cta-button {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cta-button:hover {
+  background-color: #555;
+  transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Self-Help Section */
+.self-help-section {
+  margin: 40px 0;
+  padding: 20px 15px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.self-help-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.self-help-header h2 {
+  font-size: 1.3em;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.self-help-header p {
+  font-size: 1em;
+  color: #555;
+}
+
+/* Self-Help Books Grid */
+.self-help-grid {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+}
+
+.self-help-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.self-help-grid::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
+}
+
+/* Self-Help Book Card */
+.self-help-card {
+  flex: 0 0 220px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.self-help-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.self-help-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.self-help-card-content h3 {
+  font-size: 1.1em;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.self-help-card-content p {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.self-help-rating {
+  font-size: 0.9em;
+  color: #777;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
 }

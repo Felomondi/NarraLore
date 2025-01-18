@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
-import logo from "./logo.png"; // Import the logo
+import logo from "../assets/logo.png"; // Import the logo
 
 const Navbar = ({ user, toggleSidebar, isSmallScreen }) => {
   return (
