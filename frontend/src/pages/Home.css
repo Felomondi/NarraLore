@@ -175,7 +175,7 @@
   border-radius: 15px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   position: relative; /* For absolutely positioned scroll buttons */
-  overflow: hidden; /* Ensure no content overflows the section */
+
 }
 
 .self-help-header {
@@ -232,7 +232,8 @@
 
 /* Self-Help Books Grid */
 .self-help-grid {
-  padding-top: 60px;
+  padding-top: 10px;
+  padding-bottom: 70px;
   display: flex;
   gap: 20px;
   overflow-x: auto;
@@ -267,38 +268,292 @@
   z-index: 1;
 }
 
-/* Book Info Below Image */
+/* The container must have enough height for top, middle, and bottom content */
 .self-help-card-content {
   background: #f2e8de;
   border-radius: 10px;
-  padding: 10px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 0;
   margin-top: -10px;
-  padding-top: 50px;
-  height: 50%;
-  position : relative;
+  padding: 10px;
+
+  /* Remove or comment out height: 50%;
+     and use a minimum height to ensure 
+     there's space for all absolute children. */
+  min-height: 180px; /* Adjust as needed */
 }
 
-.self-help-card-content h3 {
-  position: absolute;
-  font-size: 1em;
-  margin-top: 30px;
-  margin-bottom: 20px;
-  color: #333;
-}
 .self-help-card-content p {
+  position: absolute;
+  top: 40px;
   font-size: 0.8em;
   color: #666;
-  position: absolute;
 }
+
+/* 2) Title in the Middle (the <h3> element) */
+.self-help-card-content h3 {
+  position: absolute;
+  /* To truly center vertically, do: */
+  top: 50%;                          
+  transform: translateY(-50%);       /* moves the element up by half its own height */
+  font-size: 1em;
+  color: #333;
+  margin: 0;        /* remove default margin for consistent spacing */
+  text-align: center; /* optional, if you want the title centered horizontally */
+}
+
+/* 3) Ratings at the Very Bottom */
 .self-help-rating {
   position: absolute;
+  bottom: 10px;     /* pinned 10px from container's bottom */
   display: flex;
-  bottom: 10px;
-  margin: 0;
-  gap: 20px;
-  color: #333;
   font-size: 0.9em;
+  color: #333;
+  margin: 0;        /* no extra vertical margin */
+}
+
+/* Curated Section */
+.curated-section {
+  margin: 40px 0;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.curated-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.curated-header i {
+  color: #eda31a; /* Change to your desired color */
+}
+
+.curated-header h2 {
+  font-size: 1.5em;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-bar {
+  padding: 10px;
+  border: 1px solid #eda31a;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 250px;
+}
+
+.search-button {
+  padding: 10px;
+  background-color: #eda31a;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.search-button i {
+  color: black;
+}
+
+.search-button:hover {
+  background-color: #cc8a16;
+}
+
+/* Category Buttons */
+.curated-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.category-button {
+  padding: 8px 15px;
+  background-color: #f2e8de;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9em;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: #eda31a 1px solid;
+}
+
+.category-button:hover {
+  background-color: #eda31a;
+  color: #fff;
+}
+
+.category-button.active {
+  background-color: #eda31a;
+  color: #fff;
+}
+
+/* Books Grid */
+.curated-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.curated-card {
+  flex: 0 0 200px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.curated-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.curated-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.curated-card-content h3 {
+  font-size: 1em;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.curated-card-content p {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.curated-card-info {
+  font-size: 0.8em;
+  color: #777;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  bottom: 10px;
+  justify-content: center;
+}
+
+@media (max-width: 992px) {
+  /* Example: Make the hero title a bit smaller */
+  .homepage-container h1 {
+    font-size: 2.5em;
+  }
+
+  /* Decrease card widths so more fit horizontally on narrower screens */
+  .book-card {
+    flex: 0 0 180px; /* was 200px */
+  }
+
+  /* Self-Help cards */
+  .self-help-card {
+    flex: 0 0 180px; /* was 220px */
+  }
+
+  /* Curated section heading smaller, if desired */
+  .curated-header h2 {
+    font-size: 1.3em; /* was 1.5em */
+  }
+}
+
+@media (max-width: 768px) {
+  /* You already have: 
+     .homepage-container {
+       margin-left: 0;
+       margin-top: 60px;
+     }
+  */
+
+  /* Further reduce hero title for phones */
+  .homepage-container h1 {
+    font-size: 2em;
+    margin: 10px;  /* Reduce margins if needed */
+  }
+
+  /* Category section headings a bit smaller */
+  .category-section h2 {
+    font-size: 1.4em;
+  }
+
+  /* The Tablet Mockup can be narrower to fit small screens */
+  .tablet-mockup {
+    width: 100%;  /* Or 90%, so it fits nicely */
+    margin: 20px auto;
+  }
+
+  /* Self-Help section heading */
+  .self-help-header h2 {
+    font-size: 1em; /* was 1.1em */
+  }
+
+  /* Self-help card widths & spacing */
+  .self-help-grid {
+    gap: 15px; /* smaller gap to accommodate narrower screens */
+  }
+  .self-help-card {
+    flex: 0 0 160px; /* a bit narrower for mobile */
+  }
+
+  /* Curated cards smaller */
+  .curated-card {
+    flex: 0 0 160px; /* was 200px */
+  }
+
+  /* Possibly reduce .search-bar width */
+  .search-bar {
+    width: 180px; /* was 250px */
+    font-size: 0.9em; 
+  }
+  
+  /* Example smaller cta-button text */
+  .cta-button {
+    font-size: 0.9em;
+    padding: 8px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .homepage-container h1 {
+    font-size: 1.6em;
+  }
+
+  /* Reduce more spacing, if needed */
+  .homepage-container {
+    margin-top: 50px; /* Or less */
+    padding: 0.75rem;
+  }
+
+  .book-card {
+    flex: 0 0 140px;
+  }
+
+  .self-help-card {
+    flex: 0 0 140px;
+  }
+
+  /* Tweak final text sizes */
+  .curated-header h2 {
+    font-size: 1.2em;
+  }
 }
