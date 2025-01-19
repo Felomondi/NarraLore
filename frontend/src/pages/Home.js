@@ -1,19 +1,16 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Home.css";
 
 const categories = [
-  // { title: "New Releases", query: "new_releases" },
-  // { title: "Science Fiction", query: "science_fiction" },
   { title: "Romance", query: "romance" },
-  // { title: "Mystery & Thriller", query: "mystery" },
-  // { title: "Fantasy", query: "fantasy" },
 ];
 
 const Home = () => {
   const [booksByCategory, setBooksByCategory] = useState({});
   const [selfHelpBooks, setSelfHelpBooks] = useState([]);
+  const selfHelpGridRef = useRef(null);
 
   useEffect(() => {
     const fetchBooksByCategory = async () => {
@@ -40,7 +37,7 @@ const Home = () => {
     const fetchSelfHelpBooks = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:5000/api/books?query=self_help&maxResults=6`
+          `http://127.0.0.1:5000/api/books?query=self_help&maxResults=10`
         );
         setSelfHelpBooks(response.data || []);
       } catch (error) {
@@ -51,6 +48,16 @@ const Home = () => {
     fetchBooksByCategory();
     fetchSelfHelpBooks();
   }, []);
+
+  const scrollHorizontally = (direction) => {
+    if (selfHelpGridRef.current) {
+      const scrollAmount = 300; // Adjust scroll distance
+      selfHelpGridRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="homepage-container">
@@ -70,16 +77,35 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Self-Help Section */}
       <div className="self-help-section">
         <div className="self-help-header">
-          <h2> <i className="fas fa-leaf"></i> Popular Self-Help Books</h2>
+          <h2>
+            <i className="fas fa-leaf icon"></i> Popular Self-Help Books
+          </h2>
         </div>
-        <div className="self-help-grid">
+
+        {/* Scroll Buttons Inside the Self-Help Section */}
+        <div className="scroll-buttons-container">
+          <button
+            className="scroll-button left"
+            onClick={() => scrollHorizontally("left")}
+          >
+            &#8249; {/* Left Arrow */}
+          </button>
+          <button
+            className="scroll-button right"
+            onClick={() => scrollHorizontally("right")}
+          >
+            &#8250; {/* Right Arrow */}
+          </button>
+        </div>
+
+        {/* Self-Help Books Grid */}
+        <div className="self-help-grid" ref={selfHelpGridRef}>
           {selfHelpBooks.length > 0 ? (
             selfHelpBooks.map((book) => (
               <Link
-                to={`/book/${book.id}`} // Redirects to the book details page
+                to={`/book/${book.id}`}
                 key={book.id}
                 className="self-help-card"
               >
@@ -91,11 +117,11 @@ const Home = () => {
                   alt={book.volumeInfo.title}
                 />
                 <div className="self-help-card-content">
+                <p>{book.volumeInfo.authors?.join(", ")}</p>
                   <h3>{book.volumeInfo.title}</h3>
-                  <p>{book.volumeInfo.authors?.join(", ")}</p>
+                  
                   <div className="self-help-rating">
-                    <span>⭐ {book.volumeInfo.averageRating || "N/A"}</span>
-                    <span>👍 {book.volumeInfo.ratingsCount || 0}</span>
+                    <span>⭐ {book.volumeInfo.averageRating || "No Ratings"}</span>
                   </div>
                 </div>
               </Link>
