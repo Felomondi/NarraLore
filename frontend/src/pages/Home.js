@@ -80,7 +80,7 @@ const Home = () => {
       <div className="self-help-section">
         <div className="self-help-header">
           <h2>
-            <i className="fas fa-leaf icon"></i> Popular Self-Help Books
+            <i className="fas fa-leaf icon"></i> Recommended Self-Help Books
           </h2>
         </div>
 
