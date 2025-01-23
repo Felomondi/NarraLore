@@ -74,6 +74,10 @@
     font-size: 1.5em;
     cursor: pointer;
   }
+  .logout-button{
+    border: none;
+    background-color: transparent;
+  }
   
   @media (max-width: 768px) {
     .sidebar-toggle {

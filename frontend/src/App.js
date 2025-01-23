@@ -1,31 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase"; // Your firebase config
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import Home from "./pages/Home";
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
+import Home from "./components/Home";
 import BookDetail from "./components/BookDetail";
-import Profile from "./pages/Profile";
+import Profile from "./components/Profile";
 import Sidebar from "./components/Sidebar";
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // Track user state globally
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isSmallScreen, setIsSmallScreen] = useState(false); // Track screen size
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  // Detect screen size
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser); // Update user state when auth state changes
+    });
+
+    return () => unsubscribe(); // Cleanup the listener
+  }, []);
+
+  const handleLogout = () => {
+    auth.signOut(); // Sign out the user
+    setUser(null); // Clear user state
+  };
+
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 768); // Set to true for small screens
+      setIsSmallScreen(window.innerWidth <= 768);
       if (window.innerWidth > 768) {
-        setIsSidebarOpen(true); // Ensure sidebar is open on larger screens
+        setIsSidebarOpen(true);
       } else {
-        setIsSidebarOpen(false); // Automatically close sidebar on smaller screens
+        setIsSidebarOpen(false);
       }
     };
 
-    handleResize(); // Run on component mount
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -33,18 +47,13 @@ function App() {
     };
   }, []);
 
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
-  };
-
   return (
     <Router>
       <div style={{ display: "flex", minHeight: "100vh", flexDirection: "column" }}>
         <div style={{ display: "flex", flex: 1 }}>
           <Sidebar
             isOpen={isSidebarOpen}
-            isSmallScreen={isSmallScreen} // Pass screen size to Sidebar
+            isSmallScreen={isSmallScreen}
             toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
             user={user}
             onLogout={handleLogout}
@@ -53,15 +62,16 @@ function App() {
             <Navbar
               user={user}
               toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-              isSmallScreen={isSmallScreen} // Pass screen size to Navbar
+              isSmallScreen={isSmallScreen}
+              onLogout={handleLogout} // Pass logout handler
             />
             <div className="content" style={{ flex: 1, overflowY: "auto" }}>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/login" element={<Login setUser={setUser} />} />
+                <Route path="/" element={<Home user={user} />} />
+                <Route path="/profile" element={<Profile user={user} />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/book/:id" element={<BookDetail />} />
+                <Route path="/book/:id" element={<BookDetail user={user} />} />
               </Routes>
             </div>
           </div>
