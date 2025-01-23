@@ -77,3 +77,8 @@
   .signup-footer a:hover {
     text-decoration: underline;
   }
+
+  .logout-button{
+    border: none;
+    background-color: #ffff;
+  }
