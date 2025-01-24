@@ -20,10 +20,6 @@ const Sidebar = ({ isOpen, isSmallScreen, user, onLogout }) => {
           <i className="fas fa-bookmark sidebar-icon"></i>
           Bookmarks
         </Link>
-        <Link to="/settings" className="sidebar-link">
-          <i className="fas fa-cog sidebar-icon"></i>
-          Settings
-        </Link>
         {user && (
           <>
             <Link to="/profile" className="sidebar-link">
