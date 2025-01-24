@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, Link } from "react-router-dom"; // Import Link for navigation
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, db, googleProvider } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import "./Login.css";
+import googleLogo from "./google-icon.png"; // Adjust the path if needed
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,22 +26,18 @@ const Login = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-  
-      // Check if the user exists in Firestore
+
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userRef);
-  
+
       if (!userDoc.exists()) {
-        // If user does not exist in Firestore, create a new document
         await setDoc(userRef, {
-          username: user.displayName || "GoogleUser", // Use displayName or fallback
+          username: user.displayName || "GoogleUser",
           email: user.email,
           userID: user.uid,
-          createdAt: new Date(), // Timestamp of account creation
+          createdAt: new Date(),
         });
         console.log("New user added to Firestore:", user.uid);
-      } else {
-        console.log("User already exists in Firestore:", userDoc.data());
       }
       navigate("/"); // Redirect to home page
     } catch (err) {
@@ -72,8 +69,12 @@ const Login = () => {
       </form>
       <div className="separator">OR</div>
       <button className="google-login-button" onClick={handleGoogleLogin}>
+        <img src={googleLogo} alt="Google Logo" className="google-icon" />
         Login with Google
       </button>
+      <p className="toggle-auth">
+        Don’t have an account? <Link to="/signup">Sign up here</Link>.
+      </p>
     </div>
   );
 };
