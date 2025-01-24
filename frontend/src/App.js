@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase"; // Your firebase config
 import Navbar from "./components/Navbar";
@@ -11,13 +11,12 @@ import BookDetail from "./components/BookDetail";
 import Profile from "./components/Profile";
 import Sidebar from "./components/Sidebar";
 
-// Layout Wrapper Component
 const Layout = ({ children, user, isSidebarOpen, setIsSidebarOpen, isSmallScreen, handleLogout }) => {
-  const location = useLocation(); // Get current route
+  const location = useLocation();
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
 
   if (isAuthPage) {
-    return <>{children}</>; // Render only the child components for auth pages
+    return <>{children}</>; // Render auth pages without layout
   }
 
   return (
@@ -47,6 +46,14 @@ const Layout = ({ children, user, isSidebarOpen, setIsSidebarOpen, isSmallScreen
   );
 };
 
+// New ProtectedRoute Component
+const ProtectedRoute = ({ user, children }) => {
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
 function App() {
   const [user, setUser] = useState(null); // Track user state globally
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -61,8 +68,8 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    auth.signOut(); // Sign out the user
-    setUser(null); // Clear user state
+    auth.signOut();
+    setUser(null);
   };
 
   useEffect(() => {
@@ -93,11 +100,28 @@ function App() {
         handleLogout={handleLogout}
       >
         <Routes>
-          <Route path="/" element={<Home user={user} />} />
-          <Route path="/profile" element={<Profile user={user} />} />
+          {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/book/:id" element={<BookDetail user={user} />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute user={user}>
+                <Profile user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/book/:id"
+            element={
+              <ProtectedRoute user={user}>
+                <BookDetail user={user} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Layout>
     </Router>

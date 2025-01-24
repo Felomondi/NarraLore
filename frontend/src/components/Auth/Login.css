@@ -13,7 +13,7 @@
 
 /* Heading */
 .login-container h2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin-bottom: 20px;
   color: #333;
 }
@@ -56,18 +56,25 @@
   color: white;
   border: none;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.login-container button:hover {
+.signup-container button:hover {
   background-color: #c9841b;
   transform: scale(1.05);
 }
 
-.login-container button:active {
-  background-color: #b07318;
+.google-icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* Responsive Design */

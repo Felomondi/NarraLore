@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link for navigation
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider } from "../../firebase";
 import "./Signup.css";
+import googleLogo from "./google-icon.png"; // Adjust the path if needed
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -95,14 +96,22 @@ const Signup = () => {
       </form>
       <div className="separator">OR</div>
       <button className="google-signin-button" onClick={handleGoogleSignIn}>
+        <img src={googleLogo} alt="Google Logo" className="google-icon" />
         Sign Up with Google
       </button>
+      <p className="toggle-auth">
+        Already have an account? <Link to="/login">Login here</Link>.
+      </p>
 
       {showThankYouModal && (
         <div className="thank-you-modal-overlay">
           <div className="thank-you-modal">
-            <h3>Thank You for Signing Up!❤️</h3>
-            <p>Your account has been successfully created. Please log in to continue using our website. If you used your google account to sign up, please use tha same account to Log in!</p>
+            <h3>Thank You for Signing Up! ❤️</h3>
+            <p>
+              Your account has been successfully created. Please log in to continue using our
+              website. If you used your Google account to sign up, please use the same account to
+              log in.
+            </p>
             <button onClick={() => navigate("/login")}>Proceed to Login</button>
           </div>
         </div>
