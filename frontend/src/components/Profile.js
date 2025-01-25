@@ -1,66 +1,116 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../firebase"; // Firebase setup
 import "./Profile.css";
+import profilePic from "./profilepic.jpg";
 
 const Profile = () => {
-  const [profile, setProfile] = useState(null); // Store profile data
-  const [loading, setLoading] = useState(true); // Loading indicator
-  const [error, setError] = useState(null); // Error handling
+  const [userData, setUserData] = useState(null); // Store user data
+  const [isEditing, setIsEditing] = useState(false); // Show/hide edit popup
+  const [newUsername, setNewUsername] = useState(""); // Store new username
+  const [error, setError] = useState(""); // Handle errors
+
+  const placeholderImage = "https://via.placeholder.com/150"; // Placeholder profile image URL
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token"); // Retrieve token from localStorage
-        if (!token) {
-          setError("You are not logged in.");
-          setLoading(false);
-          return;
+        const user = auth.currentUser;
+        if (user) {
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            setUserData({
+              ...data,
+              profilePic: data.profilePic || placeholderImage, // Use placeholder if no profilePic exists
+            });
+          }
         }
-
-        // Fetch profile data
-        const response = await axios.get("http://127.0.0.1:5000/api/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setProfile(response.data.user); // Update profile state with user data
-        setLoading(false); // Turn off loading indicator
       } catch (err) {
-        console.error("Error fetching profile:", err);
-        setError("Failed to fetch profile. Please try again.");
-        setLoading(false);
+        console.error("Error fetching user data:", err);
       }
     };
 
-    fetchProfile();
+    fetchUserData();
   }, []);
 
-  // Render loading state
-  if (loading) {
+  const handleEditUsername = async () => {
+    if (!newUsername.trim()) {
+      setError("Username cannot be empty!");
+      return;
+    }
+
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+
+        // Update the username in Firestore
+        await updateDoc(userRef, { username: newUsername });
+
+        // Update local state
+        setUserData((prev) => ({ ...prev, username: newUsername }));
+        setIsEditing(false); // Close the popup
+        setNewUsername(""); // Reset input
+        setError(""); // Clear errors
+      }
+    } catch (err) {
+      console.error("Error updating username:", err);
+      setError("Failed to update username. Please try again.");
+    }
+  };
+
+  if (!userData) {
     return <p>Loading profile...</p>;
   }
 
-  // Render error state
-  if (error) {
-    return <p>{error}</p>;
-  }
-
-  // Render profile details
   return (
     <div className="profile-container">
-      <h2>Hi, {profile.username}!</h2>
-      <div className="profile-picture">
+        <h2>Hi, {userData.username}</h2>
+      <div className="profile-pic-section">
         <img
-          src="https://via.placeholder.com/150"
-          alt="Profile Placeholder"
+          src={profilePic}
+          alt="Profile"
+          className="profile-pic"
         />
-      </div>
+        </div>
       <div className="profile-details">
-        <p><strong>Username:</strong> {profile.username}</p>
-        <p><strong>Email:</strong> {profile.email}</p>
-        <p><strong>User ID:</strong> {profile.id}</p>
+        <p>
+          <strong>Username:</strong> {userData.username}
+          <button
+            className="edit-icon"
+            onClick={() => setIsEditing(true)}
+            title="Edit Username"
+          >
+            ✏️
+          </button>
+        </p>
+        <p>
+          <strong>Email:</strong> {userData.email}
+        </p>
       </div>
+
+      {/* Popup for Editing Username */}
+      {isEditing && (
+        <div className="edit-popup-overlay">
+          <div className="edit-popup">
+            <h3>Edit Username</h3>
+            <input
+              type="text"
+              placeholder="Enter new username"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              required
+            />
+            {error && <p className="error-message">{error}</p>}
+            <div className="edit-popup-buttons">
+              <button onClick={handleEditUsername}>Submit</button>
+              <button onClick={() => setIsEditing(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
