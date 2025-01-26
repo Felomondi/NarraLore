@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase"; // Firebase setup
 import "./Profile.css";
+import UserReviews from "./UserReviews"; // Import the UserReviews component
 import profilePic from "./pic.jpg";
 
 const Profile = () => {
@@ -67,14 +68,14 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-        <h2>Hi, {userData.username}</h2>
+      <h2>Hi, {userData.username}</h2>
       <div className="profile-pic-section">
         <img
           src={profilePic}
           alt="Profile"
           className="profile-pic"
         />
-        </div>
+      </div>
       <div className="profile-details">
         <p>
           <strong>Username:</strong> {userData.username}
@@ -89,6 +90,11 @@ const Profile = () => {
         <p>
           <strong>Email:</strong> {userData.email}
         </p>
+      </div>
+
+      {/* User Reviews Section */}
+      <div className="user-reviews-section">
+        <UserReviews /> {/* Display the user's reviews */}
       </div>
 
       {/* Popup for Editing Username */}
