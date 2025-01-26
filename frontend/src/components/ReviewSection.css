@@ -1,0 +1,60 @@
+/* Review Section Styles */
+.review-section-container {
+    margin-left: 15rem; /* Adjust for sidebar */
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin-bottom: 30px;
+    margin-right: 20px;
+  }
+  
+  .review-section-container h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+  }
+  
+  .review-card {
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #ffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .review-card p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .review-card .username {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .review-card .rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.2rem;
+    color: #ffd700;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .review-section-container {
+      margin-left: 0; /* Remove sidebar offset */
+      width: 90%; /* Adjust for smaller screens */
+    }
+  }
+  @media (max-width: 1024px) {
+    .review-section-container {
+        width: 70%; /* Adjust for smaller screens */
+        margin-left: 250px;
+    }
+  }
