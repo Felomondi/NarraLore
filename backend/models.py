@@ -10,27 +10,19 @@ def get_db_connection():
     )
     return conn
 
+# Remove user-related models, keep only reviews table
 def create_tables():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(50) NOT NULL UNIQUE,
-        email VARCHAR(100) NOT NULL UNIQUE,
-        password_hash VARCHAR(255) NOT NULL
-    )
-    """)
-    
+    # Remove users table creation
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS reviews (
         id INT AUTO_INCREMENT PRIMARY KEY,
         book_id VARCHAR(50) NOT NULL,
-        user_id INT NOT NULL,
+        user_id VARCHAR(255) NOT NULL,  # Change to string for Firebase UID
         rating INT CHECK(rating BETWEEN 1 AND 5),
-        review_text TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        review_text TEXT
     )
     """)
     conn.commit()
