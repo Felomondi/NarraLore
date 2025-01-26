@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase"; // Firebase setup
 import "./Profile.css";
-import profilePic from "./profilepic.jpg";
+import profilePic from "./pic.jpg";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null); // Store user data
