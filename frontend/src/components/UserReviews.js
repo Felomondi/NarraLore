@@ -27,7 +27,11 @@ const UserReviews = () => {
 
         if (userSnap.exists()) {
           const userData = userSnap.data();
-          setReviews(userData.reviews || []); // Set the reviews array (or empty array if none exist)
+          // Sort reviews by createdAt timestamp in descending order
+          const sortedReviews = (userData.reviews || []).sort(
+            (a, b) => b.createdAt.seconds - a.createdAt.seconds
+          );
+          setReviews(sortedReviews); // Set the sorted reviews
         } else {
           setError("User not found.");
         }
@@ -71,13 +75,13 @@ const UserReviews = () => {
 
   return (
     <div className="user-reviews-container">
-      <h3>Your Reviews</h3>
+      <h3>Your Recent Reviews</h3>
       {reviews.length > 0 ? (
         <div className="review-list">
           {reviews.map((review, index) => (
             <div key={index} className="review-card">
               <h4>
-                {bookTitles[review.bookID] || "Loading..."} {/* Show title or fallback */}
+                Book Title: {bookTitles[review.bookID] || "Loading..."} {/* Show title or fallback */}
               </h4>
               <p className="rating">
                 {"⭐".repeat(review.rating)} ({review.rating})

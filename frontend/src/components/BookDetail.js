@@ -155,42 +155,50 @@ const BookDetail = () => {
         </div>
       </div>
 
-      {/* Modal Popup */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Add Your Review</h3>
-            <form onSubmit={handleReviewSubmit}>
-              <label>
-                Rating (1 to 5):
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                  required
-                />
-              </label>
-              <label>
-                Review:
-                <textarea
-                  rows="4"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  required
-                />
-              </label>
-              <div className="modal-buttons">
-                <button type="submit">Submit</button>
-                <button type="button" onClick={() => setShowModal(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+{/* Modal Popup */}
+{showModal && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h3>Add Your Review</h3>
+      <form onSubmit={handleReviewSubmit}>
+        <label>
+          Rating (1 to 5):
+          <input
+            type="number"
+            min="1"
+            max="5"
+            step="0.1" // Allow decimals
+            value={rating}
+            onChange={(e) => {
+              const value = parseFloat(e.target.value); // Parse input as a float
+              if (value >= 1 && value <= 5) {
+                setRating(value);
+              } else {
+                alert("Rating must be between 1 and 5.");
+              }
+            }}
+            required
+          />
+        </label>
+        <label>
+          Review:
+          <textarea
+            rows="4"
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+            required
+          />
+        </label>
+        <div className="modal-buttons">
+          <button type="submit">Submit</button>
+          <button type="button" onClick={() => setShowModal(false)}>
+            Cancel
+          </button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
 
       {/* Review Section */}
       <ReviewSection bookID={bookID} />
