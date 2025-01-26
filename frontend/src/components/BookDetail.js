@@ -15,8 +15,8 @@ const BookDetail = () => {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false); // Modal visibility state
-  const [rating, setRating] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [rating, setRating] = useState(""); // Number rating state
   const [review, setReview] = useState("");
 
   useEffect(() => {
@@ -36,9 +36,9 @@ const BookDetail = () => {
   }, [id]);
 
   const handleReviewSubmit = (e) => {
-    e.preventDefault(); // Prevent page refresh
+    e.preventDefault();
     console.log("Submitted review:", { rating, review });
-    setShowModal(false); // Close modal after submission
+    setShowModal(false);
     setRating(""); // Clear rating
     setReview(""); // Clear review
   };
@@ -99,7 +99,7 @@ const BookDetail = () => {
             <h3>Add Your Review</h3>
             <form onSubmit={handleReviewSubmit}>
               <label>
-                Rating:
+                Rating (1 to 5):
                 <input
                   type="number"
                   min="1"
