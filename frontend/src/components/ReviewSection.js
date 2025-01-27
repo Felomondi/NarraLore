@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import "./ReviewSection.css";
 
@@ -7,41 +7,47 @@ const ReviewSection = ({ bookID }) => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const reviewsRef = collection(db, "books", bookID, "reviews");
-        const q = query(reviewsRef, orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
+    const q = query(
+      collection(db, "reviews"),
+      where("bookId", "==", bookID),
+      orderBy("createdAt", "desc")
+    );
 
-        const fetchedReviews = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const reviewsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date()
+      }));
+      setReviews(reviewsData);
+    });
 
-        setReviews(fetchedReviews);
-      } catch (err) {
-        console.error("Error fetching reviews:", err);
-      }
-    };
-
-    fetchReviews();
+    return () => unsubscribe();
   }, [bookID]);
 
   return (
     <div className="review-section-container">
-      <h3>Reviews/Comments</h3>
+      <h3>Reader Reviews</h3>
       {reviews.length > 0 ? (
-        reviews.map((review) => (
+        reviews.map(review => (
           <div key={review.id} className="review-card">
-            <p className="username">{review.username}</p>
-            <p className="rating">
-              {"⭐".repeat(review.rating)} ({review.rating})
-            </p>
-            <p>{review.review}</p>
+            <div className="review-header">
+              <span className="review-author">{review.userDisplayName || "Anonymous"}</span>
+              <span className="review-rating">
+                {Array.from({ length: Math.floor(review.rating) }, (_, i) => (
+                  <span key={i} className="star-icon">⭐</span>
+                ))}
+                {review.rating % 1 !== 0 && <span className="star-icon">⭐½</span>}
+              </span>
+              <span className="review-date">
+                {review.createdAt.toLocaleDateString()}
+              </span>
+            </div>
+            <p className="review-content">{review.content}</p>
           </div>
         ))
       ) : (
-        <p>No reviews yet. Be the first to add one!</p>
+        <p className="no-reviews">No reviews yet. Be the first to share your thoughts!</p>
       )}
     </div>
   );

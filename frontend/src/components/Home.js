@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import { bookService } from '../services/api';
 import { Link } from "react-router-dom";
 import "./Home.css";
 
@@ -31,22 +31,19 @@ const Home = () => {
   const [/*booksByCategory*/, setBooksByCategory] = useState({});
   const [selfHelpBooks, setSelfHelpBooks] = useState([]);
   const [curatedBooks, setCuratedBooks] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); // Selected curated category
-  const [searchQuery, setSearchQuery] = useState(""); // Tracks search input
-  const [searchResults, setSearchResults] = useState([]); // Stores search results
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isSearchActive, setIsSearchActive] = useState(false); // Toggle between categories and search
+  const [isSearchActive, setIsSearchActive] = useState(false);
 
   const selfHelpGridRef = useRef(null);
 
-  // Fetch default curated category and other sections on page load
   useEffect(() => {
     const fetchBooksByCategory = async () => {
       try {
         const promises = categories.map((category) =>
-          axios.get(
-            `http://127.0.0.1:5000/api/books?query=${category.query}&maxResults=10`
-          )
+          bookService.getBooks(category.query, 10)
         );
         const responses = await Promise.all(promises);
         const booksData = responses.reduce((acc, response, index) => {
@@ -61,9 +58,7 @@ const Home = () => {
 
     const fetchSelfHelpBooks = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:5000/api/books?query=self_help&maxResults=10`
-        );
+        const response = await bookService.getBooks('self_help', 10);
         setSelfHelpBooks(response.data || []);
       } catch (error) {
         console.error("Error fetching Self-Help books:", error);
@@ -71,15 +66,13 @@ const Home = () => {
     };
 
     const fetchDefaultCuratedCategory = async () => {
-      const defaultCategory = curatedCategories[0]; // First category as default
+      const defaultCategory = curatedCategories[0];
       setSelectedCategory(defaultCategory);
       setLoading(true);
-      setIsSearchActive(false); // Ensure we're showing categories by default
+      setIsSearchActive(false);
 
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:5000/api/books?query=${defaultCategory}&maxResults=10`
-        );
+        const response = await bookService.getBooks(defaultCategory, 10);
         setCuratedBooks(response.data || []);
       } catch (error) {
         console.error("Error fetching default curated books:", error);
@@ -97,12 +90,10 @@ const Home = () => {
     setSelectedCategory(category);
     setCuratedBooks([]);
     setLoading(true);
-    setIsSearchActive(false); // Switch to category mode
+    setIsSearchActive(false);
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:5000/api/books?query=${category}&maxResults=10`
-      );
+      const response = await bookService.getBooks(category, 10);
       setCuratedBooks(response.data || []);
     } catch (error) {
       console.error("Error fetching curated books:", error);
@@ -110,23 +101,20 @@ const Home = () => {
       setLoading(false);
     }
   };
-  // Perform search when user types in search bar
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      setSearchResults([]); // Clear results if search is empty
-      setIsSearchActive(false); // Revert to curated categories
+      setSearchResults([]);
+      setIsSearchActive(false);
       return;
     }
 
     setLoading(true);
-    setIsSearchActive(true); // Switch to search mode
+    setIsSearchActive(true);
 
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:5000/api/books?query=${encodeURIComponent(
-          searchQuery
-        )}&maxResults=10`
-      );
+      const encodedSearchQuery = encodeURIComponent(searchQuery);
+      const response = await bookService.getBooks(encodedSearchQuery, 10);
       setSearchResults(response.data || []);
     } catch (error) {
       console.error("Error performing search:", error);
@@ -134,11 +122,10 @@ const Home = () => {
       setLoading(false);
     }
   };
-  
- // Scroll horizontally in self-help section
+
   const scrollHorizontally = (direction) => {
     if (selfHelpGridRef.current) {
-      const scrollAmount = 300; // Adjust scroll distance
+      const scrollAmount = 300;
       selfHelpGridRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
@@ -148,7 +135,6 @@ const Home = () => {
 
   return (
     <div className="homepage-container">
-      {/* Tablet Mockup Section */}
       <div className="tablet-mockup">
         <div className="tablet-screen">
           <div className="mockup-header">
@@ -164,7 +150,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Self-Help Section */}
       <div className="self-help-section">
         <div className="self-help-header">
           <h2>
@@ -217,7 +202,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Curated Book Collection */}
       <div className="curated-section">
         <div className="curated-header">
           <h2>
@@ -251,7 +235,6 @@ const Home = () => {
           ))}
         </div>
 
-        {/* Results Section */}
         <div className="curated-grid">
           {loading ? (
             <p>Loading books...</p>

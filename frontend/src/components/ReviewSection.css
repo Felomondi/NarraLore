@@ -10,51 +10,87 @@
     margin-right: 20px;
   }
   
-  .review-section-container h3 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333;
-    text-align: center;
-  }
-  
-  .review-card {
+  /* Title */
+.review-section-container h3 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Review Card */
+.review-card {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Review Header (Author, Rating, Date) */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.review-author {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.review-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 1.2rem;
+  color: #ffd700; /* Gold color for stars */
+}
+
+.review-date {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* Review Content */
+.review-content {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* No Reviews Message */
+.no-reviews {
+  text-align: center;
+  font-size: 1rem;
+  color: #888;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .review-section-container {
     padding: 15px;
-    margin-bottom: 15px;
-    background: #ffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
-  .review-card p {
-    margin: 5px 0;
-    font-size: 1rem;
-    color: #555;
+
+  .review-card {
+    padding: 10px;
   }
-  
-  .review-card .username {
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .review-card .rating {
-    display: flex;
-    align-items: center;
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 5px;
-    font-size: 1.2rem;
-    color: #ffd700;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .review-section-container {
-      margin-left: 0; /* Remove sidebar offset */
-      width: 90%; /* Adjust for smaller screens */
-    }
+
+  .review-author {
+    font-size: 1rem;
   }
-  @media (max-width: 1024px) {
-    .review-section-container {
-        width: 70%; /* Adjust for smaller screens */
-        margin-left: 250px;
-    }
+
+  .review-date {
+    font-size: 0.8rem;
   }
+}
