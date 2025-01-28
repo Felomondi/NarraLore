@@ -32,13 +32,22 @@ const ReviewSection = ({ bookID }) => {
         reviews.map(review => (
           <div key={review.id} className="review-card">
             <div className="review-header">
-              <span className="review-author">{review.userDisplayName || "Anonymous"}</span>
+              <span className="review-author">
+                {review.userDisplayName || "Anonymous"}
+              </span>
+
+              {/* Rating: full stars + optional half-star */}
               <span className="review-rating">
                 {Array.from({ length: Math.floor(review.rating) }, (_, i) => (
                   <span key={i} className="star-icon">⭐</span>
                 ))}
-                {review.rating % 1 !== 0 && <span className="star-icon">⭐½</span>}
+                {review.rating % 1 !== 0 && (
+                  <span className="star-icon half-star">
+                    <i className="fas fa-star-half-alt"></i>
+                  </span>
+                )}
               </span>
+
               <span className="review-date">
                 {review.createdAt.toLocaleDateString()}
               </span>
@@ -47,7 +56,9 @@ const ReviewSection = ({ bookID }) => {
           </div>
         ))
       ) : (
-        <p className="no-reviews">No reviews yet. Be the first to share your thoughts!</p>
+        <p className="no-reviews">
+          No reviews yet. Be the first to share your thoughts!
+        </p>
       )}
     </div>
   );

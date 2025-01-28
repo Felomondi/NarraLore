@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { bookService } from '../services/api';
-import { collection, addDoc, serverTimestamp, getDoc, doc} from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, getDoc, doc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./BookDetail.css";
 import ReviewSection from "./ReviewSection";
@@ -54,18 +54,23 @@ const BookDetail = () => {
       }
       
       // Get display name from Firestore or fallback to auth or Anonymous
-      const displayName = userData.username ||
-      user.email?.split('@')[0] ||
-      "Anonymous";
-  
+      const displayName = userData?.username ||
+                          user.email?.split('@')[0] ||
+                          "Anonymous";
+
+      // IMPORTANT: Include the book's title in the review doc
+      const volumeInfo = book?.volumeInfo || {};
+      const currentBookTitle = volumeInfo.title || "Untitled";
+
       await addDoc(collection(db, "reviews"), {
         bookId: bookID,
+        bookTitle: currentBookTitle, // <--- storing the title
         userId: user.uid,
         userDisplayName: displayName,
         rating: Number(rating),
         content: reviewContent,
         createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
   
       setShowModal(false);
@@ -121,7 +126,12 @@ const BookDetail = () => {
           </div>
 
           {volumeInfo.saleInfo?.buyLink && (
-            <a href={volumeInfo.saleInfo.buyLink} target="_blank" rel="noopener noreferrer" className="buy-link">
+            <a
+              href={volumeInfo.saleInfo.buyLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="buy-link"
+            >
               Purchase Book
             </a>
           )}

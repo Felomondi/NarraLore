@@ -1,16 +1,16 @@
 /* Review Section Styles */
 .review-section-container {
-    margin-left: 15rem; /* Adjust for sidebar */
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    margin-bottom: 30px;
-    margin-right: 20px;
-  }
-  
-  /* Title */
+  margin-left: 15rem; /* Adjust for sidebar */
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  margin-bottom: 30px;
+  margin-right: 20px;
+}
+
+/* Title */
 .review-section-container h3 {
   font-size: 1.3rem;
   font-weight: bold;
@@ -68,6 +68,11 @@
   font-size: 1rem;
   color: #888;
   margin-top: 20px;
+}
+
+/* Additional rule to ensure half-star icon is sized the same as your "⭐" text */
+.star-icon i {
+  font-size: 1.2rem; /* Matches your review-rating font-size */
 }
 
 /* Responsive Design */
