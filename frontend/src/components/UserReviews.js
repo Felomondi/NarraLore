@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import "./ReviewSection.css";
+import "./ReviewSection.css"; // Reuse the same styling
 
 const UserReviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -31,16 +31,29 @@ const UserReviews = () => {
   if (!user) return <p>Please log in to view your reviews.</p>;
 
   return (
-    <div className="user-reviews-container">
+    <div className="review-section-container user-reviews-container">
       <h3>Your Reviews</h3>
       {reviews.length > 0 ? (
         reviews.map(review => (
           <div key={review.id} className="review-card">
             <div className="review-header">
-              <span className="review-book">Book ID: {review.bookId}</span>
-              <span className="review-rating">
-                Rating: {review.rating}/5
+              {/* Show Book Title (fallback to bookId if no title stored) */}
+              <span className="review-book">
+                Book Title: {review.bookTitle || review.bookId}
               </span>
+
+              {/* Star Rating */}
+              <span className="review-rating">
+                {Array.from({ length: Math.floor(review.rating) }, (_, i) => (
+                  <span key={i} className="star-icon">⭐</span>
+                ))}
+                {review.rating % 1 !== 0 && (
+                  <span className="star-icon half-star">
+                    <i className="fas fa-star-half-alt"></i>
+                  </span>
+                )}
+              </span>
+
               <span className="review-date">
                 {review.createdAt.toLocaleDateString()}
               </span>
