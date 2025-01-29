@@ -31,7 +31,7 @@ const UserReviews = () => {
   if (!user) return <p>Please log in to view your reviews.</p>;
 
   return (
-    <div className="review-section-container user-reviews-container">
+    <div className="user-reviews-container">
       <h3>Your Reviews</h3>
       {reviews.length > 0 ? (
         reviews.map(review => (
