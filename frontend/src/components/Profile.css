@@ -1,6 +1,7 @@
 .profile-container {
   margin-top: 20px;
   padding: 20px;
+  width: 100%;
   max-width: 600px;
   margin: 60px auto 30px; /* Added bottom margin for spacing */
   background: #fff;
@@ -101,10 +102,11 @@
     object-fit: cover;
     border: 2px solid #ddd;
   }
-  @media screen and (max-width: 768px) {
+  @media (max-width: 768px) {
     .profile-container {
       margin-top: 100px;
       padding: 15px;
+      align-items: center;
     }
   
     .profile-details {
@@ -119,9 +121,9 @@
 
   @media screen and (max-width: 1024px) {
     .profile-container {
-      margin-top: 100px;
-      padding: 10px;
-      margin-left: 300px;
+    
+      width: 90%; /* Give some breathing room on small screens */
+      padding: 15px;
     }
   
     .profile-container h2 {

@@ -6,3 +6,11 @@
     padding: 20px;
     background-color: #f5f5f5; /* Add background color for contrast */
   }
+
+  @media (max-width: 768px) {
+    .profile-page-container {
+      padding: 10px;
+      justify-content: center; /* Vertical centering */
+      min-height: calc(100vh - 20px); /* Account for padding */
+    }
+  }

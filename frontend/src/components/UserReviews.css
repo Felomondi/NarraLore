@@ -72,6 +72,7 @@
 @media (max-width: 768px) {
   .user-reviews-container {
     padding: 15px;
+    margin: 20px;
   }
 
   .review-card {
