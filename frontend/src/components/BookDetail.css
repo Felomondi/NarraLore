@@ -1,78 +1,96 @@
-/* Book Detail Container */
+/* 🟢 General Styling for Book Detail Page */
+.book-detail-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* 🟢 Book Detail Container */
 .book-detail-container {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  margin-left: 15rem; /* Adjust for sidebar */
-  margin-top: 40px;
-  padding: 20px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  margin-bottom: 30px;
-  margin-right: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  width: calc(100% - 250px); /* Dynamically adjust for sidebar */
+  margin: 40px auto;
+  transition: margin-left 0.3s ease;
 }
 
-/* Left Column */
+/* 🟢 Adjust for sidebar on desktop screens */
+@media (min-width: 1025px) {
+  .book-detail-container {
+    margin-left: 250px; /* Push content to the right to avoid sidebar overlap */
+  }
+}
+
+/* 🟢 Left Section - Book Image & Basic Info */
 .book-detail-left {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .book-detail-image {
   width: 100%;
-  max-width: 250px; /* Limit the image size */
+  max-width: 250px;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
-/* Right Column */
+/* 🟢 Right Section - Description & Metadata */
 .book-detail-right {
   flex: 2;
   display: flex;
   flex-direction: column;
-}
-
-.book-detail-right h2 {
-  font-size: 2em;
-  color: #333;
-}
-
-.book-detail-right p {
-  font-size: 1em;
-  color: #555;
+  justify-content: center;
 }
 
 .book-detail-right h3 {
   font-size: 1.5em;
   color: #333;
+  margin-bottom: 10px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .book-detail-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 100px;
-    margin-left: 50px; /* Remove sidebar offset on smaller screens */
-  }
-
-  .book-detail-left {
-    align-items: center;
-  }
-
-  .book-detail-right {
-    align-items: center;
-    text-align: center;
-  }
+.book-detail-right p {
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 8px;
 }
 
+.book-metadata {
+  margin-top: 10px;
+}
 
-/* Add Review Button */
+.book-metadata p {
+  font-size: 0.95em;
+  color: #666;
+}
+
+/* 🟢 Purchase Button */
+.buy-link {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 15px;
+  transition: background 0.3s ease-in-out;
+}
+
+.buy-link:hover {
+  background-color: #0056b3;
+}
+
+/* 🟢 Add Review Button */
 .add-review-button {
   background-color: #f2e8de;
   color: black;
@@ -83,14 +101,13 @@
   border-radius: 5px;
   transition: background-color 0.3s ease;
   margin-top: 20px;
-  margin-bottom: 200px;
 }
 
 .add-review-button:hover {
   background-color: #eda31a;
 }
 
-/* Modal Overlay */
+/* 🟢 Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -102,10 +119,9 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
- 
 }
 
-/* Modal Content */
+/* 🟢 Modal Content */
 .modal-content {
   background: white;
   padding: 20px;
@@ -135,13 +151,14 @@
   border-radius: 5px;
 }
 
-.modal-buttons {
+/* 🟢 Modal Buttons */
+.modal-actions {
   display: flex;
+  justify-content: space-between;
   gap: 10px;
-  justify-content: center;
 }
 
-.modal-buttons button {
+.modal-actions button {
   background-color: #eda31a;
   color: black;
   border: none;
@@ -150,31 +167,65 @@
   border-radius: 5px;
 }
 
-/* General Page Blur */
-.page-container.blur-background {
+.modal-actions button:hover {
+  background-color: #f39c12;
+}
+
+/* 🟢 Blur Background When Modal is Active */
+.modal-active .book-detail-container {
   filter: blur(5px);
-  pointer-events: none; /* Disable interactions */
-  opacity: 0.5;
+  pointer-events: none;
 }
 
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Dim the entire page */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Highest priority */
-}
-
+/* 🟢 Prevent Scrolling When Modal is Active */
 body.modal-active {
-  overflow: hidden; /* Prevent scrolling on body when modal is active */
+  overflow: hidden;
 }
 
-body:not(.modal-active) {
-  overflow: auto; /* Allow scrolling when modal is inactive */
+/* 🟢 Responsive Design - Fix Sidebar Overlap on Tablets */
+@media (max-width: 1024px) {
+  .book-detail-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: calc(100% - 200px); /* Adjust for sidebar width */
+    margin-left: 200px; /* Leaves space for sidebar */
+  }
+
+  .book-detail-left {
+    align-items: center;
+  }
+
+  .book-detail-right {
+    align-items: center;
+    text-align: center;
+  }
+
+  .buy-link {
+    width: 100%;
+  }
+}
+
+/* 🟢 Mobile Responsive Fix */
+@media (max-width: 768px) {
+  .book-detail-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-left: 0; /* Remove sidebar offset */
+    margin-top: 80px;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .add-review-button {
+    width: 100%;
+  }
 }
