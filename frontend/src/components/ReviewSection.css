@@ -1,25 +1,25 @@
-/* Review Section Styles */
+/* 🟢 Review Section - Adjusted for Sidebar */
 .review-section-container {
-  margin-left: 15rem; /* Adjust for sidebar */
+  max-width: 1000px;
+  width: calc(100% - 250px); /* Adjusts width dynamically */
+  margin: 40px auto;
   padding: 20px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  margin-bottom: 30px;
-  margin-right: 20px;
+  transition: margin-left 0.3s ease;
 }
 
-/* Title */
+/* 🟢 Title */
 .review-section-container h3 {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: bold;
-  color: #333;
   text-align: center;
+  color: #333;
   margin-bottom: 20px;
 }
 
-/* Review Card */
+/* 🟢 Review Card */
 .review-card {
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -28,17 +28,19 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Review Header (Author, Rating, Date) */
+/* 🟢 Review Header (Author, Rating, Date) */
 .review-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Prevents text from overlapping */
+  gap: 10px;
   margin-bottom: 10px;
 }
 
 .review-author {
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #333;
 }
 
@@ -55,14 +57,14 @@
   color: #999;
 }
 
-/* Review Content */
+/* 🟢 Review Content */
 .review-content {
   font-size: 1rem;
   color: #555;
   line-height: 1.6;
 }
 
-/* No Reviews Message */
+/* 🟢 No Reviews Message */
 .no-reviews {
   text-align: center;
   font-size: 1rem;
@@ -70,14 +72,33 @@
   margin-top: 20px;
 }
 
-/* Additional rule to ensure half-star icon is sized the same as your "⭐" text */
-.star-icon i {
-  font-size: 1.2rem; /* Matches your review-rating font-size */
+/* 🟢 Sidebar Adjustment for Desktop */
+@media (min-width: 1025px) {
+  .review-section-container {
+    margin-left: 250px; /* Ensures it does not overlap sidebar */
+  }
 }
 
-/* Responsive Design */
+/* 🟢 Tablets (Sidebar still present) */
+@media (max-width: 1024px) {
+  .review-section-container {
+    width: calc(100% - 200px);
+    margin-left: 200px;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+/* 🟢 Mobile (Full width, No Sidebar Issues) */
 @media (max-width: 768px) {
   .review-section-container {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
     padding: 15px;
   }
 
@@ -88,7 +109,6 @@
   .review-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
   }
 
   .review-author {
