@@ -1,42 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
-import { bookService } from '../services/api';
+import { bookService } from "../services/api";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 import { Link } from "react-router-dom";
 import "./Home.css";
 
 const categories = [{ title: "Romance", query: "romance" }];
 
 const curatedCategories = [
-  "Motivation",
-  "Poem",
-  "Biography",
-  "Novel",
-  "Fiction",
-  "Non-Fiction",
-  "Literature",
-  "Romance",
-  "Career",
-  "Lifestyle",
-  "Psychology",
-  "Culture",
-  "Gym",
-  "Self Development",
-  "Technology",
-  "Finance",
-  "Short Story",
-  "Life",
-  "Cons",
+  "Motivation", "Poem", "Biography", "Novel", "Fiction", "Non-Fiction",
+  "Literature", "Romance", "Career", "Lifestyle", "Psychology",
+  "Culture", "Gym", "Self Development", "Technology", "Finance",
+  "Short Story", "Life", "Cons"
 ];
 
 const Home = () => {
   const [/*booksByCategory*/, setBooksByCategory] = useState({});
   const [selfHelpBooks, setSelfHelpBooks] = useState([]);
   const [curatedBooks, setCuratedBooks] = useState([]);
+  const [bookRatings, setBookRatings] = useState({});
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
-
   const selfHelpGridRef = useRef(null);
 
   useEffect(() => {
@@ -58,8 +45,9 @@ const Home = () => {
 
     const fetchSelfHelpBooks = async () => {
       try {
-        const response = await bookService.getBooks('self_help', 10);
+        const response = await bookService.getBooks("self_help", 10);
         setSelfHelpBooks(response.data || []);
+        fetchAverageRatings(response.data);
       } catch (error) {
         console.error("Error fetching Self-Help books:", error);
       }
@@ -74,8 +62,9 @@ const Home = () => {
       try {
         const response = await bookService.getBooks(defaultCategory, 10);
         setCuratedBooks(response.data || []);
+        fetchAverageRatings(response.data);
       } catch (error) {
-        console.error("Error fetching default curated books:", error);
+        console.error("Error fetching curated books:", error);
       } finally {
         setLoading(false);
       }
@@ -86,6 +75,30 @@ const Home = () => {
     fetchDefaultCuratedCategory();
   }, []);
 
+    // Function to fetch average ratings for books
+  const fetchAverageRatings = async (books) => {
+    if (!books) return;
+
+    const ratingsData = {};
+    for (const book of books) {
+      const bookID = book.id;
+      const reviewsRef = collection(db, "reviews");
+      const q = query(reviewsRef, where("bookId", "==", bookID));
+      const querySnapshot = await getDocs(q);
+
+      let totalRating = 0;
+      let numRatings = 0;
+      querySnapshot.forEach((doc) => {
+        totalRating += doc.data().rating;
+        numRatings++;
+      });
+
+      ratingsData[bookID] = numRatings > 0 ? (totalRating / numRatings).toFixed(1) : "No Ratings Yet";
+    }
+
+    setBookRatings((prev) => ({ ...prev, ...ratingsData }));
+  };
+
   const handleCategoryClick = async (category) => {
     setSelectedCategory(category);
     setCuratedBooks([]);
@@ -95,6 +108,7 @@ const Home = () => {
     try {
       const response = await bookService.getBooks(category, 10);
       setCuratedBooks(response.data || []);
+      fetchAverageRatings(response.data);
     } catch (error) {
       console.error("Error fetching curated books:", error);
     } finally {
@@ -116,6 +130,7 @@ const Home = () => {
       const encodedSearchQuery = encodeURIComponent(searchQuery);
       const response = await bookService.getBooks(encodedSearchQuery, 10);
       setSearchResults(response.data || []);
+      fetchAverageRatings(response.data);
     } catch (error) {
       console.error("Error performing search:", error);
     } finally {
@@ -149,25 +164,19 @@ const Home = () => {
           </div>
         </div>
       </div>
+      
+      {/* Self-Help Section */}
 
       <div className="self-help-section">
         <div className="self-help-header">
-          <h2>
-            <i className="fas fa-leaf icon"></i> Recommended Self-Help Books
-          </h2>
+          <h2> <i className="fas fa-leaf icon"></i> Recommended Self-Help Books </h2>
         </div>
 
         <div className="scroll-buttons-container">
-          <button
-            className="scroll-button left"
-            onClick={() => scrollHorizontally("left")}
-          >
+          <button className="scroll-button left" onClick={() => scrollHorizontally("left")}>
             &#8249;
           </button>
-          <button
-            className="scroll-button right"
-            onClick={() => scrollHorizontally("right")}
-          >
+          <button className="scroll-button right" onClick={() => scrollHorizontally("right")}>
             &#8250;
           </button>
         </div>
@@ -175,23 +184,13 @@ const Home = () => {
         <div className="self-help-grid" ref={selfHelpGridRef}>
           {selfHelpBooks.length > 0 ? (
             selfHelpBooks.map((book) => (
-              <Link
-                to={`/book/${book.id}`}
-                key={book.id}
-                className="self-help-card"
-              >
-                <img
-                  src={
-                    book.volumeInfo.imageLinks?.thumbnail ||
-                    "https://via.placeholder.com/150"
-                  }
-                  alt={book.volumeInfo.title}
-                />
+              <Link to={`/book/${book.id}`} key={book.id} className="self-help-card">
+                <img src={ book.volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150"} alt={book.volumeInfo.title}/>
                 <div className="self-help-card-content">
                   <p>{book.volumeInfo.authors?.join(", ")}</p>
                   <h3>{book.volumeInfo.title}</h3>
                   <div className="self-help-rating">
-                    <span>⭐ {book.volumeInfo.averageRating || "No Ratings"}</span>
+                  <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
                   </div>
                 </div>
               </Link>
@@ -201,20 +200,12 @@ const Home = () => {
           )}
         </div>
       </div>
-
+      {/* Curated Books Section */}
       <div className="curated-section">
         <div className="curated-header">
-          <h2>
-            <i className="fas fa-book"></i> Curated Book Collection
-          </h2>
+          <h2><i className="fas fa-book"></i> Curated Book Collection</h2>
           <div className="search-container">
-            <input
-              type="text"
-              placeholder="Browse by book title, author"
-              className="search-bar"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <input type="text" placeholder="Browse by book title, author" className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             <button className="search-button" onClick={handleSearch}>
               <i className="fas fa-search"></i>
             </button>
@@ -223,13 +214,7 @@ const Home = () => {
 
         <div className="curated-categories">
           {curatedCategories.map((category) => (
-            <button
-              key={category}
-              className={`category-button ${
-                selectedCategory === category ? "active" : ""
-              }`}
-              onClick={() => handleCategoryClick(category)}
-            >
+            <button  key={category}  className={`category-button ${ selectedCategory === category ? "active" : ""}`} onClick={() => handleCategoryClick(category)}>
               {category}
             </button>
           ))}
@@ -257,7 +242,7 @@ const Home = () => {
                     <p>{book.volumeInfo.authors?.join(", ")}</p>
                     <h3>{book.volumeInfo.title}</h3>
                     <div className="curated-card-info">
-                      <span>⭐ {book.volumeInfo.averageRating || "No Ratings"}</span>
+                    <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
                     </div>
                   </div>
                 </Link>
@@ -283,7 +268,7 @@ const Home = () => {
                   <p>{book.volumeInfo.authors?.join(", ")}</p>
                   <h3>{book.volumeInfo.title}</h3>
                   <div className="curated-card-info">
-                    <span>⭐ {book.volumeInfo.averageRating || "No Ratings"}</span>
+                  <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
                   </div>
                 </div>
               </Link>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { bookService } from '../services/api';
-import { collection, addDoc, serverTimestamp, getDoc, doc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, getDoc, doc, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./BookDetail.css";
 import ReviewSection from "./ReviewSection";
@@ -19,6 +19,8 @@ const BookDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const [rating, setRating] = useState("");
   const [reviewContent, setReviewContent] = useState("");
+  const [averageRating, setAverageRating] = useState(null);
+  const [ratingCount, setRatingCount] = useState(0);
 
   useEffect(() => {
     const fetchBookDetails = async () => {
@@ -30,41 +32,61 @@ const BookDetail = () => {
       }
       setLoading(false);
     };
+
     fetchBookDetails();
+  }, [bookID]);
+
+  // Fetch reviews and calculate average rating
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const reviewsQuery = query(collection(db, "reviews"), where("bookId", "==", bookID));
+        const querySnapshot = await getDocs(reviewsQuery);
+
+        if (querySnapshot.empty) {
+          setAverageRating(null);
+          setRatingCount(0);
+          return;
+        }
+
+        let totalRating = 0;
+        let count = 0;
+
+        querySnapshot.forEach((doc) => {
+          totalRating += doc.data().rating;
+          count++;
+        });
+
+        setAverageRating((totalRating / count).toFixed(1)); // Round to 1 decimal
+        setRatingCount(count);
+      } catch (err) {
+        console.error("Error fetching ratings:", err);
+      }
+    };
+
+    fetchRatings();
   }, [bookID]);
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
-  
+
     if (!user) {
       alert("Please log in to submit a review.");
       return;
     }
-  
+
     try {
-      // Get user document from Firestore
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const userData = userDoc.data();
 
-      if (!userDoc.exists()) {
-        console.log("No user doc found for this UID!");
-      } else {
-        console.log("userDoc data:", userDoc.data());
-      }
-      
-      // Get display name from Firestore or fallback to auth or Anonymous
-      const displayName = userData?.username ||
-                          user.email?.split('@')[0] ||
-                          "Anonymous";
-
-      // IMPORTANT: Include the book's title in the review doc
+      const displayName = userData?.username || user.email?.split('@')[0] || "Anonymous";
       const volumeInfo = book?.volumeInfo || {};
       const currentBookTitle = volumeInfo.title || "Untitled";
 
       await addDoc(collection(db, "reviews"), {
         bookId: bookID,
-        bookTitle: currentBookTitle, // <--- storing the title
+        bookTitle: currentBookTitle,
         userId: user.uid,
         userDisplayName: displayName,
         rating: Number(rating),
@@ -72,7 +94,7 @@ const BookDetail = () => {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-  
+
       setShowModal(false);
       setRating("");
       setReviewContent("");
@@ -120,8 +142,9 @@ const BookDetail = () => {
           
           <div className="book-metadata">
             <p><strong>Categories:</strong> {volumeInfo.categories?.join(", ") || "N/A"}</p>
-            <p><strong>Average Rating:</strong> {volumeInfo.averageRating || "N/A"}/5</p>
-            <p><strong>Ratings Count:</strong> {volumeInfo.ratingsCount || "0"}</p>
+            <p><strong>Average Rating:</strong> 
+              {averageRating ? ` ${averageRating} (${ratingCount} ratings)` : " No Ratings Yet(Be the first!)"}
+            </p>
             <p><strong>ISBN:</strong> {volumeInfo.industryIdentifiers?.[0]?.identifier || "N/A"}</p>
           </div>
 
