@@ -20,6 +20,9 @@ const Signup = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const userID = userCredential.user.uid;
 
+      // Force a fresh token so Firestore sees the newly created user
+      await auth.currentUser?.getIdToken(true);
+
       const usernameRef = doc(db, "usernames", username);
       const usernameDoc = await getDoc(usernameRef);
       if (usernameDoc.exists()) {
@@ -32,6 +35,8 @@ const Signup = () => {
         username,
         email,
         createdAt: serverTimestamp(),
+        followers: [],
+        following: []
       });
 
       setShowThankYouModal(true); // Show modal on successful signup
@@ -55,6 +60,8 @@ const Signup = () => {
           email: user.email,
           userID: user.uid,
           createdAt: new Date(),
+          followers: [],
+          following: []
         });
         console.log("New Google user added to Firestore");
       }

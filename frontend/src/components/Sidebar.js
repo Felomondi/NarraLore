@@ -22,6 +22,10 @@ const Sidebar = ({ isOpen, isSmallScreen, user, onLogout }) => {
         </Link>
         {user && (
           <>
+            <Link to="/discover-friends" className="sidebar-link">
+              <i className="fas fa-users sidebar-icon"></i>
+              Discover Friends
+            </Link>
             <Link to="/profile" className="sidebar-link">
               <i className="fas fa-user sidebar-icon"></i>
               Profile

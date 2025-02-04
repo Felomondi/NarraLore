@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-import { auth, db } from "../firebase"; // Firebase setup
+import { auth, db } from "../firebase";
 import "./Profile.css";
-import UserReviews from "./UserReviews"; // Import the UserReviews component
-import profilePic from "./pic.jpg";
+import UserReviews from "./UserReviews";
+import profilePic from "../assets/pic.jpg";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [error, setError] = useState("");
-  const [followingList, setFollowingList] = useState([]);
-  const [followersList, setFollowersList] = useState([]);
+  // Separate states for raw IDs and details
+  const [rawFollowingList, setRawFollowingList] = useState([]);
+  const [rawFollowersList, setRawFollowersList] = useState([]);
+  const [followingDetails, setFollowingDetails] = useState([]);
+  const [followersDetails, setFollowersDetails] = useState([]);
   const [isFollowingPopupOpen, setIsFollowingPopupOpen] = useState(false);
   const [isFollowersPopupOpen, setIsFollowersPopupOpen] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false);
 
   const currentUser = auth.currentUser;
   const userId = currentUser ? currentUser.uid : null;
@@ -32,12 +34,9 @@ const Profile = () => {
               ...data,
               profilePic: data.profilePic || placeholderImage,
             });
-            setFollowingList(data.following || []);
-            setFollowersList(data.followers || []);
-
-            if (currentUser && data.followers?.includes(currentUser.uid)) {
-              setIsFollowing(true);
-            }
+            // Save raw IDs
+            setRawFollowingList(data.following || []);
+            setRawFollowersList(data.followers || []);
           }
         }
       } catch (err) {
@@ -46,34 +45,41 @@ const Profile = () => {
     };
 
     fetchUserData();
-  }, [userId, currentUser]);
+  }, [userId]);
 
-  const handleFollow = async () => {
-    if (!currentUser) {
-      alert("You must be logged in to follow users.");
-      return;
-    }
-
+  // This function still expects an array of IDs (strings)
+  const fetchUserDetails = async (userIDs) => {
     try {
-      const currentUserRef = doc(db, "users", currentUser.uid);
-      const targetUserRef = doc(db, "users", userId);
-
-      if (isFollowing) {
-        await updateDoc(currentUserRef, { following: arrayRemove(userId) });
-        await updateDoc(targetUserRef, { followers: arrayRemove(currentUser.uid) });
-
-        setIsFollowing(false);
-        setFollowersList((prev) => prev.filter((id) => id !== currentUser.uid));
-      } else {
-        await updateDoc(currentUserRef, { following: arrayUnion(userId) });
-        await updateDoc(targetUserRef, { followers: arrayUnion(currentUser.uid) });
-
-        setIsFollowing(true);
-        setFollowersList((prev) => [...prev, currentUser.uid]);
-      }
-    } catch (err) {
-      console.error("Error following/unfollowing user:", err);
+      const usersDetails = await Promise.all(
+        userIDs.map(async (id) => {
+          const userRef = doc(db, "users", id);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const { username } = userSnap.data();
+            return { id, username };
+          }
+          return { id, username: "Unknown User" };
+        })
+      );
+      return usersDetails;
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      return [];
     }
+  };
+
+  const openFollowingPopup = async () => {
+    // Fetch details from rawFollowingList
+    const details = await fetchUserDetails(rawFollowingList);
+    setFollowingDetails(details);
+    setIsFollowingPopupOpen(true);
+  };
+
+  const openFollowersPopup = async () => {
+    // Fetch details from rawFollowersList
+    const details = await fetchUserDetails(rawFollowersList);
+    setFollowersDetails(details);
+    setIsFollowersPopupOpen(true);
   };
 
   if (!userData) {
@@ -99,22 +105,19 @@ const Profile = () => {
         <p><strong>Email:</strong> {userData.email}</p>
       </div>
 
-      {/* Follow button (only visible on other profiles) */}
-      {currentUser && currentUser.uid !== userId && (
-        <button className="follow-button" onClick={handleFollow}>
-          {isFollowing ? "Unfollow" : "Follow"}
-        </button>
-      )}
-
       {/* Followers & Following Stats */}
       <div className="follow-section">
-        <button onClick={() => setIsFollowersPopupOpen(true)}>Followers: {followersList.length}</button>
-        <button onClick={() => setIsFollowingPopupOpen(true)}>Following: {followingList.length}</button>
+        <button onClick={openFollowersPopup}>
+          Followers: {rawFollowersList.length}
+        </button>
+        <button onClick={openFollowingPopup}>
+          Following: {rawFollowingList.length}
+        </button>
       </div>
 
       {/* User Reviews Section */}
       <div className="user-reviews-section">
-        <UserReviews /> {/* Display the user's reviews */}
+        <UserReviews />
       </div>
 
       {/* Followers List Popup */}
@@ -122,11 +125,11 @@ const Profile = () => {
         <div className="popup-overlay">
           <div className="popup-content">
             <h3>Followers</h3>
-            {followersList.length > 0 ? (
-              followersList.map((follower, index) => (
-                <div key={index} className="follow-item">
-                  <img src={placeholderImage} alt="User" className="follow-pic" />
-                  <p>{follower}</p>
+            {followersDetails.length > 0 ? (
+              followersDetails.map((follower) => (
+                <div key={follower.id} className="follow-item">
+                  <img src={profilePic} alt="User" className="follow-pic" />
+                  <p>{follower.username}</p>
                 </div>
               ))
             ) : (
@@ -142,11 +145,11 @@ const Profile = () => {
         <div className="popup-overlay">
           <div className="popup-content">
             <h3>Following</h3>
-            {followingList.length > 0 ? (
-              followingList.map((following, index) => (
-                <div key={index} className="follow-item">
-                  <img src={placeholderImage} alt="User" className="follow-pic" />
-                  <p>{following}</p>
+            {followingDetails.length > 0 ? (
+              followingDetails.map((following) => (
+                <div key={following.id} className="follow-item">
+                  <img src={profilePic} alt="User" className="follow-pic" />
+                  <p>{following.username}</p>
                 </div>
               ))
             ) : (
@@ -162,7 +165,13 @@ const Profile = () => {
         <div className="edit-popup-overlay">
           <div className="edit-popup">
             <h3>Edit Username</h3>
-            <input type="text" placeholder="Enter new username" value={newUsername} onChange={(e) => setNewUsername(e.target.value)} required />
+            <input
+              type="text"
+              placeholder="Enter new username"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              required
+            />
             {error && <p className="error-message">{error}</p>}
             <div className="edit-popup-buttons">
               <button onClick={() => setIsEditing(false)}>Cancel</button>

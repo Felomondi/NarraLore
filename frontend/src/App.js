@@ -10,6 +10,7 @@ import Home from "./components/Home";
 import BookDetail from "./components/BookDetail";
 import Profile from "./components/Profile";
 import Sidebar from "./components/Sidebar";
+import DiscoverFriends from "./components/DiscoverFriends";
 
 const Layout = ({ children, user, isSidebarOpen, setIsSidebarOpen, isSmallScreen, handleLogout }) => {
   const location = useLocation();
@@ -119,6 +120,14 @@ function App() {
             element={
               <ProtectedRoute user={user}>
                 <BookDetail user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/discover-friends"
+            element={
+              <ProtectedRoute user={user}>
+                <DiscoverFriends user={user} />
               </ProtectedRoute>
             }
           />
