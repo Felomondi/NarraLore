@@ -31,20 +31,21 @@ Welcome to **LitLore**, an interactive book discovery and review platform that a
 
 ## 💻 **Setup & Installation**  
 
-### **1️⃣ Clone the Repository**  
+#### **1️⃣ Clone the Repository**  
 ```bash
 git clone <link to this repo>
 cd litlore
 ```
-### 2️⃣ Install Dependencies
+### 🏗 Frontend Setup
+#### 2️⃣ Install Dependencies
 Navigate to the frontend folder and run the command:
 ```bash
 npm install
 ```
-### 3️⃣ Set Up Firebase
-	1.	Go to Firebase Console and create a new project.
-	2.	Set up Authentication, Firestore Database, and Storage.
-	3.	Get your Firebase config credentials and update firebase.js:
+#### 3️⃣ Set Up Firebase
+1.	Go to Firebase Console and create a new project.
+2.	Set up Authentication, Firestore Database, and Storage.
+3.	Get your Firebase config credentials and update firebase.js:
  ```bash
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -55,9 +56,63 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID"
 };
 ```
-### 4️⃣ Run the Development Server
-Navigate to the backned 
 
+### 🖥 Backend Setup
+#### 1️⃣ Navigate to the Backend Directory
+```bash
+cd backend
+```
+### 2️⃣ Create a Virtual Environment (I used Python for Backend)
+```bash
+# For macOS/Linux:
+python3 -m venv venv
+source venv/bin/activate
 
+# For Windows:
+python -m venv venv
+venv\Scripts\activate
+```
 
+### 3️⃣ Install Backend Dependencies
+```bash
+pip install -r requirements.txt
+```
 
+### 4️⃣ Set Up Environment Variables
+```bash
+FLASK_APP=app.py
+FLASK_ENV=development
+SECRET_KEY=your_secret_key
+```
+## 🔄 Running Frontend & Backend Together
+1.	Open two terminal windows.
+2.	Start the backend:
+```bash
+cd backend
+source venv/bin/activate  # (Or venv\Scripts\activate for Windows)
+flask run
+```
+
+3.	Start the frontend(in the other terminal window):
+```bash
+cd frontend
+npm start
+```
+
+## 🛠 Tech Stack
+•	Frontend: React.js, CSS
+•	Backend: Flask (Python)
+•	Database: Firebase Firestore (NoSQL database)
+•	Authentication: Firebase Authentication
+•	Storage: Firebase Storage(Firestore basically and Firebase just for User info)
+•	APIs: Google Books API(for book info. This might change soon), Custom Flask API
+
+## 🤝 Contributing
+I welcome contributions if you are interested in starting your open source journey! If you’d like to improve the project:
+1.	Fork the repository
+2.	Create a new branch (feature-branch)
+3.	Make your changes
+4.	Commit & Push
+5.	Submit a Pull Request
+
+##### 📩 Have suggestions or want to report a bug? Open an issue!
