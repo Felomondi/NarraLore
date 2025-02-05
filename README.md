@@ -34,7 +34,6 @@ Welcome to **LitLore**, an interactive book discovery and review platform that a
 #### **1️⃣ Clone the Repository**  
 ```bash
 git clone <link to this repo>
-cd litlore
 ```
 ### 🏗 Frontend Setup
 #### 2️⃣ Install Dependencies
