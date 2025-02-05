@@ -34,5 +34,30 @@ Welcome to **LitLore**, an interactive book discovery and review platform that a
 ### **1️⃣ Clone the Repository**  
 ```bash
 git clone <link to this repo>
+cd litlore
 ```
 ### 2️⃣ Install Dependencies
+Navigate to the frontend folder and run the command:
+```bash
+npm install
+```
+### 3️⃣ Set Up Firebase
+	1.	Go to Firebase Console and create a new project.
+	2.	Set up Authentication, Firestore Database, and Storage.
+	3.	Get your Firebase config credentials and update firebase.js:
+ ```bash
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+```
+### 4️⃣ Run the Development Server
+Navigate to the backned 
+
+
+
+
