@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@tanstack/react-query": "^5.66.0",
     "bootstrap": "^5.3.3",
     "firebase": "^11.2.0",
     "react-rating-stars-component": "^2.2.0"

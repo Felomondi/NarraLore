@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import { bookService } from "../services/api";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
@@ -14,71 +15,67 @@ const curatedCategories = [
   "Short Story", "Life", "Cons"
 ];
 
+const CACHE_TTL = 3600000; // 1 hour
+
 const Home = () => {
-  const [/*booksByCategory*/, setBooksByCategory] = useState({});
-  const [selfHelpBooks, setSelfHelpBooks] = useState([]);
-  const [curatedBooks, setCuratedBooks] = useState([]);
-  const [bookRatings, setBookRatings] = useState({});
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(curatedCategories[0]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [bookRatings, setBookRatings] = useState({});
   const selfHelpGridRef = useRef(null);
 
-  useEffect(() => {
-    const fetchBooksByCategory = async () => {
-      try {
-        const promises = categories.map((category) =>
-          bookService.getBooks(category.query, 10)
-        );
-        const responses = await Promise.all(promises);
-        const booksData = responses.reduce((acc, response, index) => {
-          acc[categories[index].title] = response.data || [];
-          return acc;
-        }, {});
-        setBooksByCategory(booksData);
-      } catch (error) {
-        console.error("Error fetching books by category:", error);
-      }
-    };
+  // 1. Fetch Books by Category using useQueries
+  const booksByCategoryQueries = useQueries({
+    queries: categories.map((category) => ({
+      queryKey: ["booksByCategory", category.query],
+      queryFn: () => bookService.getBooks(category.query, 10).then((res) => res.data),
+      staleTime: CACHE_TTL,
+    })),
+  });
 
-    const fetchSelfHelpBooks = async () => {
-      try {
-        const response = await bookService.getBooks("self_help", 10);
-        setSelfHelpBooks(response.data || []);
-        fetchAverageRatings(response.data);
-      } catch (error) {
-        console.error("Error fetching Self-Help books:", error);
-      }
-    };
+  // Combine results into one object for easy access
+  const booksByCategory = {};
+  booksByCategoryQueries.forEach((query, index) => {
+    booksByCategory[categories[index].title] = query.data || [];
+  });
 
-    const fetchDefaultCuratedCategory = async () => {
-      const defaultCategory = curatedCategories[0];
-      setSelectedCategory(defaultCategory);
-      setLoading(true);
-      setIsSearchActive(false);
+  // 2. Fetch Self-Help Books (single object syntax)
+  const {
+    data: selfHelpBooks = [],
+    isLoading: isSelfHelpLoading,
+  } = useQuery({
+    queryKey: ["selfHelpBooks"],
+    queryFn: () => bookService.getBooks("self_help", 10).then((res) => res.data),
+    staleTime: CACHE_TTL,
+  });
 
-      try {
-        const response = await bookService.getBooks(defaultCategory, 10);
-        setCuratedBooks(response.data || []);
-        fetchAverageRatings(response.data);
-      } catch (error) {
-        console.error("Error fetching curated books:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // 3. Fetch Curated Books (depends on selectedCategory)
+  const {
+    data: curatedBooks = [],
+    isLoading: isCuratedBooksLoading,
+  } = useQuery({
+    queryKey: ["curatedBooks", selectedCategory],
+    queryFn: () => bookService.getBooks(selectedCategory, 10).then((res) => res.data),
+    staleTime: CACHE_TTL,
+    enabled: !isSearchActive,
+  });
 
-    fetchBooksByCategory();
-    fetchSelfHelpBooks();
-    fetchDefaultCuratedCategory();
-  }, []);
+  // 4. Set up a search query (disabled until manually triggered)
+  const {
+    data: searchResults = [],
+    refetch: refetchSearch,
+    isLoading: isSearchLoading,
+  } = useQuery({
+    queryKey: ["searchBooks", searchQuery],
+    queryFn: () =>
+      bookService.getBooks(encodeURIComponent(searchQuery), 10).then((res) => res.data),
+    enabled: false,
+    staleTime: CACHE_TTL,
+  });
 
-    // Function to fetch average ratings for books
+  // Function to fetch average ratings
   const fetchAverageRatings = async (books) => {
     if (!books) return;
-
     const ratingsData = {};
     for (const book of books) {
       const bookID = book.id;
@@ -92,52 +89,45 @@ const Home = () => {
         totalRating += doc.data().rating;
         numRatings++;
       });
-
-      ratingsData[bookID] = numRatings > 0 ? (totalRating / numRatings).toFixed(1) : "No Ratings Yet";
+      ratingsData[bookID] =
+        numRatings > 0 ? (totalRating / numRatings).toFixed(1) : "No Ratings Yet";
     }
-
     setBookRatings((prev) => ({ ...prev, ...ratingsData }));
   };
 
-  const handleCategoryClick = async (category) => {
-    setSelectedCategory(category);
-    setCuratedBooks([]);
-    setLoading(true);
-    setIsSearchActive(false);
-
-    try {
-      const response = await bookService.getBooks(category, 10);
-      setCuratedBooks(response.data || []);
-      fetchAverageRatings(response.data);
-    } catch (error) {
-      console.error("Error fetching curated books:", error);
-    } finally {
-      setLoading(false);
+  // Update ratings when self-help books load
+  useEffect(() => {
+    if (selfHelpBooks.length) {
+      fetchAverageRatings(selfHelpBooks);
     }
-  };
+  }, [selfHelpBooks]);
 
+  // Update ratings when curated books load
+  useEffect(() => {
+    if (curatedBooks.length) {
+      fetchAverageRatings(curatedBooks);
+    }
+  }, [curatedBooks]);
+
+  // Search handler
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-      setSearchResults([]);
       setIsSearchActive(false);
       return;
     }
-
-    setLoading(true);
     setIsSearchActive(true);
-
-    try {
-      const encodedSearchQuery = encodeURIComponent(searchQuery);
-      const response = await bookService.getBooks(encodedSearchQuery, 10);
-      setSearchResults(response.data || []);
-      fetchAverageRatings(response.data);
-    } catch (error) {
-      console.error("Error performing search:", error);
-    } finally {
-      setLoading(false);
-    }
+    await refetchSearch();
+    // Optionally fetch ratings for searchResults once available
+    fetchAverageRatings(searchResults);
   };
 
+  // Handler for clicking a curated category
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category);
+    setIsSearchActive(false);
+  };
+
+  // Horizontal scrolling for self-help grid
   const scrollHorizontally = (direction) => {
     if (selfHelpGridRef.current) {
       const scrollAmount = 300;
@@ -148,8 +138,12 @@ const Home = () => {
     }
   };
 
+  // Determine overall loading state
+  const loading = isSelfHelpLoading || isCuratedBooksLoading || isSearchLoading;
+
   return (
     <div className="homepage-container">
+      {/* Header / Mockup Section */}
       <div className="tablet-mockup">
         <div className="tablet-screen">
           <div className="mockup-header">
@@ -164,14 +158,12 @@ const Home = () => {
           </div>
         </div>
       </div>
-      
-      {/* Self-Help Section */}
 
+      {/* Self-Help Section */}
       <div className="self-help-section">
         <div className="self-help-header">
-          <h2> <i className="fas fa-leaf icon"></i> Recommended Self-Help Books </h2>
+          <h2><i className="fas fa-leaf icon"></i> Recommended Self-Help Books</h2>
         </div>
-
         <div className="scroll-buttons-container">
           <button className="scroll-button left" onClick={() => scrollHorizontally("left")}>
             &#8249;
@@ -180,17 +172,19 @@ const Home = () => {
             &#8250;
           </button>
         </div>
-
         <div className="self-help-grid" ref={selfHelpGridRef}>
           {selfHelpBooks.length > 0 ? (
             selfHelpBooks.map((book) => (
               <Link to={`/book/${book.id}`} key={book.id} className="self-help-card">
-                <img src={ book.volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150"} alt={book.volumeInfo.title}/>
+                <img
+                  src={book.volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150"}
+                  alt={book.volumeInfo.title}
+                />
                 <div className="self-help-card-content">
                   <p>{book.volumeInfo.authors?.join(", ")}</p>
                   <h3>{book.volumeInfo.title}</h3>
                   <div className="self-help-rating">
-                  <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
+                    <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
                   </div>
                 </div>
               </Link>
@@ -200,49 +194,51 @@ const Home = () => {
           )}
         </div>
       </div>
+
       {/* Curated Books Section */}
       <div className="curated-section">
         <div className="curated-header">
           <h2><i className="fas fa-book"></i> Curated Book Collection</h2>
           <div className="search-container">
-            <input type="text" placeholder="Browse by book title, author" className="search-bar" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Browse by book title, author"
+              className="search-bar"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <button className="search-button" onClick={handleSearch}>
               <i className="fas fa-search"></i>
             </button>
           </div>
         </div>
-
         <div className="curated-categories">
           {curatedCategories.map((category) => (
-            <button  key={category}  className={`category-button ${ selectedCategory === category ? "active" : ""}`} onClick={() => handleCategoryClick(category)}>
+            <button
+              key={category}
+              className={`category-button ${selectedCategory === category ? "active" : ""}`}
+              onClick={() => handleCategoryClick(category)}
+            >
               {category}
             </button>
           ))}
         </div>
-
         <div className="curated-grid">
           {loading ? (
             <p>Loading books...</p>
           ) : isSearchActive ? (
             searchResults.length > 0 ? (
               searchResults.map((book) => (
-                <Link
-                  to={`/book/${book.id}`}
-                  key={book.id}
-                  className="curated-card"
-                >
+                <Link to={`/book/${book.id}`} key={book.id} className="curated-card">
                   <img
-                    src={
-                      book.volumeInfo.imageLinks?.thumbnail ||
-                      "https://via.placeholder.com/150"
-                    }
+                    src={book.volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150"}
                     alt={book.volumeInfo.title}
                   />
                   <div className="curated-card-content">
                     <p>{book.volumeInfo.authors?.join(", ")}</p>
                     <h3>{book.volumeInfo.title}</h3>
                     <div className="curated-card-info">
-                    <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
+                      <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
                     </div>
                   </div>
                 </Link>
@@ -252,23 +248,16 @@ const Home = () => {
             )
           ) : curatedBooks.length > 0 ? (
             curatedBooks.map((book) => (
-              <Link
-                to={`/book/${book.id}`}
-                key={book.id}
-                className="curated-card"
-              >
+              <Link to={`/book/${book.id}`} key={book.id} className="curated-card">
                 <img
-                  src={
-                    book.volumeInfo.imageLinks?.thumbnail ||
-                    "https://via.placeholder.com/150"
-                  }
+                  src={book.volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150"}
                   alt={book.volumeInfo.title}
                 />
                 <div className="curated-card-content">
                   <p>{book.volumeInfo.authors?.join(", ")}</p>
                   <h3>{book.volumeInfo.title}</h3>
                   <div className="curated-card-info">
-                  <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
+                    <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
                   </div>
                 </div>
               </Link>
