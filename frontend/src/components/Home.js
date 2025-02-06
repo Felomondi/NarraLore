@@ -22,6 +22,7 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [bookRatings, setBookRatings] = useState({});
+  const [bookComments, setBookComments] = useState({});
   const selfHelpGridRef = useRef(null);
 
   // 1. Fetch Books by Category using useQueries
@@ -73,10 +74,12 @@ const Home = () => {
     staleTime: CACHE_TTL,
   });
 
-  // Function to fetch average ratings
-  const fetchAverageRatings = async (books) => {
+  // Function to fetch average ratings and comments
+  const fetchAverageRatingsAndComments = async (books) => {
     if (!books) return;
     const ratingsData = {};
+    const commentsData = {};
+
     for (const book of books) {
       const bookID = book.id;
       const reviewsRef = collection(db, "reviews");
@@ -85,27 +88,35 @@ const Home = () => {
 
       let totalRating = 0;
       let numRatings = 0;
+      let numComments = 0;
+
       querySnapshot.forEach((doc) => {
         totalRating += doc.data().rating;
         numRatings++;
+        if (doc.data().content) {
+          numComments++;
+        }
       });
-      ratingsData[bookID] =
-        numRatings > 0 ? (totalRating / numRatings).toFixed(1) : "No Ratings Yet";
+
+      ratingsData[bookID] = numRatings > 0 ? (totalRating / numRatings).toFixed(1) : "No Ratings Yet";
+      commentsData[bookID] = numComments;
     }
+
     setBookRatings((prev) => ({ ...prev, ...ratingsData }));
+    setBookComments((prev) => ({ ...prev, ...commentsData }));
   };
 
-  // Update ratings when self-help books load
+  // Update ratings and comments when self-help books load
   useEffect(() => {
     if (selfHelpBooks.length) {
-      fetchAverageRatings(selfHelpBooks);
+      fetchAverageRatingsAndComments(selfHelpBooks);
     }
   }, [selfHelpBooks]);
 
-  // Update ratings when curated books load
+  // Update ratings and comments when curated books load
   useEffect(() => {
     if (curatedBooks.length) {
-      fetchAverageRatings(curatedBooks);
+      fetchAverageRatingsAndComments(curatedBooks);
     }
   }, [curatedBooks]);
 
@@ -117,8 +128,8 @@ const Home = () => {
     }
     setIsSearchActive(true);
     await refetchSearch();
-    // Optionally fetch ratings for searchResults once available
-    fetchAverageRatings(searchResults);
+    // Optionally fetch ratings and comments for searchResults once available
+    fetchAverageRatingsAndComments(searchResults);
   };
 
   // Handler for clicking a curated category
@@ -185,6 +196,9 @@ const Home = () => {
                   <h3>{book.volumeInfo.title}</h3>
                   <div className="self-help-rating">
                     <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
+                    <span className="comments-count">
+                      <i className="fas fa-comment"></i> {bookComments[book.id] || 0}
+                    </span>
                   </div>
                 </div>
               </Link>
@@ -239,6 +253,9 @@ const Home = () => {
                     <h3>{book.volumeInfo.title}</h3>
                     <div className="curated-card-info">
                       <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
+                      <span className="comments-count">
+                        <i className="fas fa-comment"></i> {bookComments[book.id] || 0}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -258,6 +275,9 @@ const Home = () => {
                   <h3>{book.volumeInfo.title}</h3>
                   <div className="curated-card-info">
                     <span>⭐ {bookRatings[book.id] || "No Ratings Yet"}</span>
+                    <span className="comments-count">
+                      <i className="fas fa-comment"></i> {bookComments[book.id] || 0}
+                    </span>
                   </div>
                 </div>
               </Link>
