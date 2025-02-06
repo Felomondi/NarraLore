@@ -99,11 +99,17 @@ npm start
 ```
 
 ## 🛠 Tech Stack
-•	Frontend: React.js, CSS
+</br>
+•	Frontend: React.js, CSS 
+</br>
 •	Backend: Flask (Python)
+</br>
 •	Database: Firebase Firestore (NoSQL database)
+</br>
 •	Authentication: Firebase Authentication
+</br>
 •	Storage: Firebase Storage(Firestore basically and Firebase just for User info)
+</br>
 •	APIs: Google Books API(for book info. This might change soon), Custom Flask API
 
 ## 🤝 Contributing
