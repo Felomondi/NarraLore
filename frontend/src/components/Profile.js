@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, updateDoc} from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./Profile.css";
 import UserReviews from "./UserReviews";
@@ -113,7 +113,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <h2>Hi, {userData.username}</h2>
+      <h2>Aloha, {userData.username}</h2>
       <div className="profile-pic-section">
         <img src={profilePic} alt="Profile" className="profile-pic" />
       </div>

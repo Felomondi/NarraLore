@@ -1,35 +1,99 @@
-/* Review Actions (Edit & Delete Icons) */
+/* 🎨 Main Container */
+.user-reviews-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+.user-reviews-container h3 {
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* 📖 Review Cards */
+.review-card {
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.review-card:hover {
+  transform: translateY(-2px);
+}
+
+/* 📌 Review Header (Book Title, Rating, Date, Actions) */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.review-book {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.review-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.2rem;
+  color: #eda31a; /* Gold color for stars */
+}
+
+.review-date {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* 📝 Edit & 🗑️ Delete Icons */
 .review-actions {
   display: flex;
   gap: 10px;
 }
 
-.review-actions button {
+.edit-icon,
+.delete-icon {
   background: none;
   border: none;
-  cursor: pointer;
   font-size: 1.2rem;
-  padding: 5px;
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
 }
 
-.review-actions .edit-icon:hover {
-  color: #007bff;
-  transform: scale(1.1);
+/* 📃 Review Content */
+.review-content {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-top: 5px;
 }
 
-.review-actions .delete-icon:hover {
-  color: red;
-  transform: scale(1.1);
+/* ❌ No Reviews Message */
+.no-reviews {
+  text-align: center;
+  font-size: 1rem;
+  color: #888;
+  margin-top: 20px;
 }
 
-/* Modal Overlay */
+/* 🎨 Edit Review Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -37,18 +101,19 @@
   z-index: 1000;
 }
 
-/* Modal Content */
 .modal-content {
   background: white;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
 
 .modal-content h3 {
-  margin-bottom: 15px;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
 }
 
 .modal-content input,
@@ -68,13 +133,44 @@
 
 .modal-actions button {
   background-color: #eda31a;
-  color: black;
-  border: none;
+  color: white;
   padding: 10px 15px;
+  border: none;
   cursor: pointer;
   border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .modal-actions button:hover {
-  background-color: #f2e8de;
+  background-color: #eda31a;
+}
+
+.modal-actions button:last-child {
+  background-color: #eda31a;
+}
+
+.modal-actions button:last-child:hover {
+  background-color: #eda31a;
+}
+
+/* 📱 Mobile Responsiveness */
+@media (max-width: 768px) {
+  .user-reviews-container {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .review-actions {
+    justify-content: flex-start;
+  }
+
+  .review-date {
+    text-align: left;
+  }
 }

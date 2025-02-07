@@ -16,12 +16,12 @@ const Sidebar = ({ isOpen, isSmallScreen, user, onLogout }) => {
           <i className="fas fa-home sidebar-icon"></i>
           Home
         </Link>
-        <Link to="/bookmarks" className="sidebar-link">
-          <i className="fas fa-bookmark sidebar-icon"></i>
-          Bookmarks
-        </Link>
         {user && (
           <>
+              <Link to="/bookmarks" className="sidebar-link">
+                <i className="fas fa-bookmark sidebar-icon"></i>
+                Bookmarks
+              </Link>
             <Link to="/discover-friends" className="sidebar-link">
               <i className="fas fa-users sidebar-icon"></i>
               Discover Friends

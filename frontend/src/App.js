@@ -11,6 +11,7 @@ import BookDetail from "./components/BookDetail";
 import Profile from "./components/Profile";
 import Sidebar from "./components/Sidebar";
 import DiscoverFriends from "./components/DiscoverFriends";
+import Bookmarks from "./components/Bookmarks";
 
 const Layout = ({ children, user, isSidebarOpen, setIsSidebarOpen, isSmallScreen, handleLogout }) => {
   const location = useLocation();
@@ -131,6 +132,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+              path="/bookmarks"
+              element={
+                <ProtectedRoute user={user}>
+                  <Bookmarks />
+                </ProtectedRoute>
+              }
+            />
         </Routes>
       </Layout>
     </Router>

@@ -2,7 +2,8 @@
 .review-section-container {
   max-width: 1000px;
   width: calc(100% - 250px); /* Adjusts width dynamically */
-  margin: 40px auto;
+  margin-left: 250px; 
+  margin-bottom: 70px;
   padding: 20px;
   background: #fff;
   border-radius: 8px;
@@ -16,7 +17,7 @@
   font-weight: bold;
   text-align: center;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 /* 🟢 Review Card */
@@ -33,9 +34,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Prevents text from overlapping */
-  gap: 10px;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 150px;
+
 }
 
 .review-author {
@@ -47,7 +48,8 @@
 .review-rating {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  margin-left: 50px;
   font-size: 1.2rem;
   color: #ffd700; /* Gold color for stars */
 }
@@ -71,7 +73,34 @@
   color: #888;
   margin-top: 20px;
 }
+/* 📌 Like Button */
+.like-section {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
 
+.like-button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  transition: color 0.2s ease-in-out;
+  margin-left: auto; /* Push the button to the right */
+}
+
+.like-button:hover {
+  color: #ff4c4c; /* Red when hovering */
+}
+
+.liked {
+  color: #ff4c4c; /* Red when liked */
+}
 /* 🟢 Sidebar Adjustment for Desktop */
 @media (min-width: 1025px) {
   .review-section-container {
@@ -80,26 +109,45 @@
 }
 
 /* 🟢 Tablets (Sidebar still present) */
-@media (max-width: 1024px) {
+@media screen and (max-width: 1024px) {
+  /* Tablet View */
   .review-section-container {
     width: calc(100% - 200px);
     margin-left: 200px;
   }
 
   .review-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .review-author {
+    font-size: 0.9rem;
+  }
+
+  .review-date {
+    font-size: 0.85rem;
+    margin-left: 10px;
+  }
+
+  .review-rating {
+    font-size: 1rem;
+    margin-left: 10px;
+  }
+
+  .like-button {
+    font-size: 1rem;
+    margin-left: 10px;
   }
 }
 
 /* 🟢 Mobile (Full width, No Sidebar Issues) */
 @media (max-width: 768px) {
   .review-section-container {
-    width: 95%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding: 15px;
+    padding: 10px;
   }
 
   .review-card {
@@ -107,15 +155,47 @@
   }
 
   .review-header {
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
   .review-author {
     font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .review-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1rem;
+    color: #ffd700;
+  }
+
+  .like-button {
+    font-size: 1rem;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .review-content {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-top: 5px;
   }
 
   .review-date {
     font-size: 0.8rem;
+    color: #999;
+    text-align: right;
+    margin-top: 10px;
   }
 }
