@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { bookService } from '../services/api';
-import { collection, addDoc, serverTimestamp, getDoc, doc, query, where, getDocs } from "firebase/firestore";
+import { collection, serverTimestamp, getDoc, doc, query, where, getDocs, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./BookDetail.css";
 import ReviewSection from "./ReviewSection";
@@ -70,35 +70,43 @@ const BookDetail = () => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
-
+  
     if (!user) {
       alert("Please log in to submit a review.");
       return;
     }
-
+  
     try {
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      const userData = userDoc.data();
-
-      const displayName = userData?.username || user.email?.split('@')[0] || "Anonymous";
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+  
+      const bookRef = doc(db, "reviews", `${bookID}_${user.uid}`);
       const volumeInfo = book?.volumeInfo || {};
-      const currentBookTitle = volumeInfo.title || "Untitled";
-
-      await addDoc(collection(db, "reviews"), {
+  
+      await setDoc(bookRef, {
         bookId: bookID,
-        bookTitle: currentBookTitle,
+        bookTitle: volumeInfo.title || "Untitled",
         userId: user.uid,
-        userDisplayName: displayName,
+        userDisplayName: userDoc.exists() ? userDoc.data().username : "Anonymous",
         rating: Number(rating),
         content: reviewContent,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-
+  
+      // Add the book to the user's bookmarks (if not already bookmarked)
+      await updateDoc(userRef, {
+        bookmarks: arrayUnion({
+          bookId: bookID,
+          title: volumeInfo.title || "Untitled",
+          thumbnail: volumeInfo.imageLinks?.thumbnail || "https://via.placeholder.com/150",
+        }),
+      });
+  
       setShowModal(false);
       setRating("");
       setReviewContent("");
-      alert("Review submitted successfully!");
+      alert("Review submitted & book bookmarked!");
     } catch (err) {
       console.error("Review submission failed:", err);
       alert("Failed to submit review. Please try again.");
