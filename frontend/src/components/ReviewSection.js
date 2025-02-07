@@ -1,3 +1,5 @@
+// This is the contaner for the reviews
+
 import React, { useEffect, useState } from "react";
 import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
