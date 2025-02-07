@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./Profile.css";
 import UserReviews from "./UserReviews";
@@ -10,13 +10,6 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [error, setError] = useState("");
-  // Separate states for raw IDs and details
-  const [rawFollowingList, setRawFollowingList] = useState([]);
-  const [rawFollowersList, setRawFollowersList] = useState([]);
-  const [followingDetails, setFollowingDetails] = useState([]);
-  const [followersDetails, setFollowersDetails] = useState([]);
-  const [isFollowingPopupOpen, setIsFollowingPopupOpen] = useState(false);
-  const [isFollowersPopupOpen, setIsFollowersPopupOpen] = useState(false);
 
   const currentUser = auth.currentUser;
   const userId = currentUser ? currentUser.uid : null;
@@ -34,9 +27,6 @@ const Profile = () => {
               ...data,
               profilePic: data.profilePic || placeholderImage,
             });
-            // Save raw IDs
-            setRawFollowingList(data.following || []);
-            setRawFollowersList(data.followers || []);
           }
         }
       } catch (err) {
@@ -47,39 +37,29 @@ const Profile = () => {
     fetchUserData();
   }, [userId]);
 
-  // This function still expects an array of IDs (strings)
-  const fetchUserDetails = async (userIDs) => {
-    try {
-      const usersDetails = await Promise.all(
-        userIDs.map(async (id) => {
-          const userRef = doc(db, "users", id);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            const { username } = userSnap.data();
-            return { id, username };
-          }
-          return { id, username: "Unknown User" };
-        })
-      );
-      return usersDetails;
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      return [];
+  const handleEditUsername = async () => {
+    if (!newUsername.trim()) {
+      setError("Username cannot be empty!");
+      return;
     }
-  };
 
-  const openFollowingPopup = async () => {
-    // Fetch details from rawFollowingList
-    const details = await fetchUserDetails(rawFollowingList);
-    setFollowingDetails(details);
-    setIsFollowingPopupOpen(true);
-  };
+    try {
+      if (userId) {
+        const userRef = doc(db, "users", userId);
 
-  const openFollowersPopup = async () => {
-    // Fetch details from rawFollowersList
-    const details = await fetchUserDetails(rawFollowersList);
-    setFollowersDetails(details);
-    setIsFollowersPopupOpen(true);
+        // Update the username in Firestore
+        await updateDoc(userRef, { username: newUsername });
+
+        // Update local state
+        setUserData((prev) => ({ ...prev, username: newUsername }));
+        setIsEditing(false); // Close the popup
+        setNewUsername(""); // Reset input
+        setError(""); // Clear errors
+      }
+    } catch (err) {
+      console.error("Error updating username:", err);
+      setError("Failed to update username. Please try again.");
+    }
   };
 
   if (!userData) {
@@ -96,69 +76,21 @@ const Profile = () => {
       <div className="profile-details">
         <p>
           <strong>Username:</strong> {userData.username}
-          {currentUser && currentUser.uid === userId && (
-            <button className="edit-icon" onClick={() => setIsEditing(true)} title="Edit Username">
-              ✏️
-            </button>
-          )}
+          <button
+            className="edit-icon"
+            onClick={() => setIsEditing(true)}
+            title="Edit Username"
+          >
+            ✏️
+          </button>
         </p>
         <p><strong>Email:</strong> {userData.email}</p>
-      </div>
-
-      {/* Followers & Following Stats */}
-      <div className="follow-section">
-        <button onClick={openFollowersPopup}>
-          Followers: {rawFollowersList.length}
-        </button>
-        <button onClick={openFollowingPopup}>
-          Following: {rawFollowingList.length}
-        </button>
       </div>
 
       {/* User Reviews Section */}
       <div className="user-reviews-section">
         <UserReviews />
       </div>
-
-      {/* Followers List Popup */}
-      {isFollowersPopupOpen && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <h3>Followers</h3>
-            {followersDetails.length > 0 ? (
-              followersDetails.map((follower) => (
-                <div key={follower.id} className="follow-item">
-                  <img src={profilePic} alt="User" className="follow-pic" />
-                  <p>{follower.username}</p>
-                </div>
-              ))
-            ) : (
-              <p>No followers yet.</p>
-            )}
-            <button onClick={() => setIsFollowersPopupOpen(false)}>Close</button>
-          </div>
-        </div>
-      )}
-
-      {/* Following List Popup */}
-      {isFollowingPopupOpen && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <h3>Following</h3>
-            {followingDetails.length > 0 ? (
-              followingDetails.map((following) => (
-                <div key={following.id} className="follow-item">
-                  <img src={profilePic} alt="User" className="follow-pic" />
-                  <p>{following.username}</p>
-                </div>
-              ))
-            ) : (
-              <p>Not following anyone yet.</p>
-            )}
-            <button onClick={() => setIsFollowingPopupOpen(false)}>Close</button>
-          </div>
-        </div>
-      )}
 
       {/* Popup for Editing Username */}
       {isEditing && (
@@ -174,6 +106,7 @@ const Profile = () => {
             />
             {error && <p className="error-message">{error}</p>}
             <div className="edit-popup-buttons">
+              <button onClick={handleEditUsername}>Submit</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
           </div>
