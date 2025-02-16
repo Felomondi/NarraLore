@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { Link } from "react-router-dom";
 import "./Home.css";
+import "./Home.scss";
 
 const categories = [{ title: "Romance", query: "romance" }];
 
@@ -24,6 +25,21 @@ const Home = () => {
   const [bookRatings, setBookRatings] = useState({});
   const [bookComments, setBookComments] = useState({});
   const selfHelpGridRef = useRef(null);
+  const [displayedText, setDisplayedText] = useState("");
+  const fullText = "Hi, Welcome to LitLore.";
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index < fullText.length) {
+        setDisplayedText(fullText.substring(0, index + 1));
+        index++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100); // Adjust speed if needed
+    return () => clearInterval(interval);
+  }, []);
 
   // 1. Fetch Books by Category using useQueries
   const booksByCategoryQueries = useQueries({
@@ -155,18 +171,18 @@ const Home = () => {
   return (
     <div className="homepage-container">
       {/* Header / Mockup Section */}
-      <div className="tablet-mockup">
-        <div className="tablet-screen">
-          <div className="mockup-header">
-            <h1>Hi, Welcome to LitLore.</h1>
-            <h2>Unlock the World of Reading with LitLore!</h2>
-            <p>
-              <span className="benefit">📚 Access a vast collection of free books.</span>
-              <span className="benefit">🎧 Enjoy hands-free reading with our TTS models.</span>
-              <span className="benefit">🚀 Boost your productivity effortlessly.</span>
-            </p>
-            <button className="cta-button">Start Reading</button>
-          </div>
+      <div className="dotted-background">
+        <div className="mockup-content">
+          <h1>{displayedText}</h1>
+          <h2>A Social Platform for Book Reviews!</h2>
+          <p>
+            <span className="benefit">✍️ Write insightful book reviews.</span>
+            <span className="benefit">⭐ Rate your favorite books and see what’s trending.</span>
+            <span className="benefit">👥 Follow friends & see what they’re reading.</span>
+            <span className="benefit">💬 Join the discussion – comment & like reviews.</span>
+            <span className="benefit">📱 Coming soon: LitLore for iOS & Android! 🚀</span>
+          </p>
+          <button className="cta-button">Start Reading</button>
         </div>
       </div>
 

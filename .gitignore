@@ -1,3 +1,6 @@
 .env
 secrets/
 config.json
+.venv/
+node_modules/
+.DS_Store

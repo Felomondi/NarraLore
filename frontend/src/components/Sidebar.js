@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Sidebar.css";
+import "./Sidebar.scss";
 import logo from "../assets/logo.png";
 
 const Sidebar = ({ isOpen, isSmallScreen, user, onLogout }) => {
