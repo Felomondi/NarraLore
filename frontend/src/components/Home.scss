@@ -1,0 +1,164 @@
+// 🎨 Variables
+$dot-color: rgba(0, 0, 0, 0.1);
+$dot-size: 3px;
+$dot-spacing: 20px;
+$text-color: #333;
+$highlight-color: #e89f2e; // Gold-orange accent color
+
+.dotted-background {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* Dot Pattern Background */
+  background: radial-gradient($dot-color $dot-size, transparent $dot-size),
+              radial-gradient($dot-color $dot-size, transparent $dot-size);
+  background-size: $dot-spacing $dot-spacing;
+  background-position: 0 0, calc($dot-spacing / 2) calc($dot-spacing / 2);
+
+  .mockup-content {
+    padding: 25px 50px;
+    border-radius: 12px;
+    max-width: 650px;
+    animation: fadeIn 1s ease-in-out;
+
+    h1 {
+      font-size: 2.6rem;
+      font-weight: bold;
+      color: $highlight-color;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      font-family: 'Merriweather', serif;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 2px solid $highlight-color;
+      animation: typing 3s steps(40, end) forwards, blink 0.7s infinite;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      color: darken($text-color, 10%);
+      font-weight: 600;
+      margin-top: 12px;
+      text-transform: capitalize;
+      font-family: 'Lora', serif;
+      opacity: 0;
+      animation: fadeInText 1.5s ease-in-out 2s forwards;
+    }
+
+    .benefit {
+      display: block;
+      font-size: 1.1rem;
+      margin: 12px 0;
+      font-weight: 500;
+      color: $text-color;
+      position: relative;
+      transition: all 0.3s ease-in-out;
+      font-family: 'Lora', serif;
+      opacity: 0;
+      animation: fadeInText 1.5s ease-in-out 2.5s forwards;
+
+      &::before {
+        content: "✔ ";
+        color: $highlight-color;
+        font-weight: bold;
+      }
+
+      &:hover {
+        transform: translateX(5px);
+        color: darken($highlight-color, 10%);
+      }
+    }
+
+    .cta-button {
+      margin-top: 18px;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, #e89f2e, #d9841d);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      font-family: 'Merriweather', serif;
+      opacity: 0;
+      animation: fadeInText 1.5s ease-in-out 3s forwards;
+
+      &:hover {
+        background: linear-gradient(135deg, #d9841d, #b96d15);
+        transform: translateY(-2px);
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}
+
+// 🖋 Typing Effect for H1
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+
+// ✨ Smooth Fade-in Animation
+@keyframes fadeInText {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 📱 Responsive Design
+@media (max-width: 768px) {
+  .dotted-background {
+    height: 550px;
+    padding: 20px;
+    margin-top: 40px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  .benefit {
+    font-size: 1rem;
+  }
+}
