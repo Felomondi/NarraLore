@@ -1,59 +1,132 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Import Link for navigation
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom"; 
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db, googleProvider } from "../../firebase";
 import "./Signup.css";
-import googleLogo from "./google-icon.png"; // Adjust the path if needed
+import googleLogo from "./google-icon.png";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
-  const [showThankYouModal, setShowThankYouModal] = useState(false); // Modal visibility state
+  const [showThankYouModal, setShowThankYouModal] = useState(false); 
+  const [emailValidation, setEmailValidation] = useState(null);
   const navigate = useNavigate();
 
+  const API_KEY = process.env.REACT_APP_HUNTER_API_KEY; 
+
+  // 📌 Validate email format (Basic Check)
+  const validateEmailFormat = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+
+  // 📌 Verify email using Hunter.io API
+  const validateEmailWithHunter = async (email) => {
+    if (!email) return;
+
+    try {
+      const response = await fetch(
+        `https://api.hunter.io/v2/email-verifier?email=${email}&api_key=${API_KEY}`
+      );
+      const data = await response.json();
+
+      if (data.errors) {
+        return { valid: false, message: "❌ Invalid API request." };
+      }
+
+      const status = data.data.status; 
+
+      if (status === "valid") {
+        return { valid: true, message: "✅ Email is valid!" };
+      } else if (status === "invalid") {
+        return { valid: false, message: "❌ Invalid email address." };
+      } else {
+        return { valid: false, message: "⚠️ Unable to verify email." };
+      }
+    } catch (error) {
+      console.error("Hunter.io API error:", error);
+      return { valid: false, message: "❌ Error verifying email." };
+    }
+  };
+
+  // 📌 Handle real-time email validation
+  const handleEmailChange = async (e) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+
+    if (!validateEmailFormat(newEmail)) {
+      setEmailValidation({ valid: false, message: "❌ Invalid email format." });
+      return;
+    }
+
+    setEmailValidation({ valid: null, message: "⏳ Checking email validity..." });
+
+    clearTimeout(window.emailTimeout);
+    window.emailTimeout = setTimeout(async () => {
+      const result = await validateEmailWithHunter(newEmail);
+      setEmailValidation(result);
+    }, 1000);
+  };
+
+  // 📌 Handle Signup Process
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    if (!validateEmailFormat(email)) {
+      setError("❌ Invalid email format. Please enter a valid email.");
+      return;
+    }
+
+    if (!emailValidation || !emailValidation.valid) {
+      setError("❌ This email address cannot receive messages. Please use a valid email.");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const userID = userCredential.user.uid;
 
-      // Force a fresh token so Firestore sees the newly created user
       await auth.currentUser?.getIdToken(true);
 
+      // Check if username exists
       const usernameRef = doc(db, "usernames", username);
       const usernameDoc = await getDoc(usernameRef);
       if (usernameDoc.exists()) {
-        setError("Username is already taken. Please choose another one.");
+        setError("❌ Username is already taken. Please choose another one.");
         return;
       }
 
+      // Store user in Firestore
       await setDoc(doc(db, "users", userID), {
         userID,
         username,
         email,
         createdAt: serverTimestamp(),
         followers: [],
-        following: []
+        following: [],
       });
 
-      setShowThankYouModal(true); // Show modal on successful signup
+      // 📌 Send Email Verification
+      await sendEmailVerification(auth.currentUser);
+      setShowThankYouModal(true);
     } catch (err) {
       console.error("Error during signup process:", err);
       setError(err.message);
     }
   };
 
+  // 📌 Handle Google Sign-in
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
       const userRef = doc(db, "users", user.uid);
-
       const userDoc = await getDoc(userRef);
+
       if (!userDoc.exists()) {
         await setDoc(userRef, {
           username: user.displayName || "GoogleUser",
@@ -61,12 +134,12 @@ const Signup = () => {
           userID: user.uid,
           createdAt: new Date(),
           followers: [],
-          following: []
+          following: [],
         });
         console.log("New Google user added to Firestore");
       }
 
-      setShowThankYouModal(true); // Show modal for Google signup as well
+      setShowThankYouModal(true); 
     } catch (err) {
       console.error("Error during Google signup:", err);
       setError(err.message);
@@ -88,9 +161,14 @@ const Signup = () => {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           required
         />
+        {emailValidation && (
+          <p className={emailValidation.valid ? "valid-message" : "error-message"}>
+            {emailValidation.message}
+          </p>
+        )}
         <input
           type="password"
           placeholder="Password"
@@ -115,9 +193,7 @@ const Signup = () => {
           <div className="thank-you-modal">
             <h3>Thank You for Signing Up! ❤️</h3>
             <p>
-              Your account has been successfully created. Please log in to continue using our
-              website. If you used your Google account to sign up, please use the same account to
-              log in.
+              Please check your inbox to verify your email before logging in.
             </p>
             <button onClick={() => navigate("/login")}>Proceed to Login</button>
           </div>
