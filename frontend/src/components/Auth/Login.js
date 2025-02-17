@@ -5,6 +5,7 @@ import { auth, db, googleProvider } from "../../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import "./Login.css";
 import googleLogo from "./google-icon.png"; // Adjust the path if needed
+import { sendEmailVerification } from "firebase/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,8 +16,16 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/"); // Redirect to the home page
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      if (!user.emailVerified) {
+        setError("Please verify your email before logging in.");
+        await sendEmailVerification(user);
+        return;
+      }
+  
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }
