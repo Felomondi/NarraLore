@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./ReviewSection.css";
-import CommentSection from "./CommentSection";
+import CommentSection from "./CommentSection.js";
 
 const ReviewSection = ({ bookID }) => {
   const [reviews, setReviews] = useState([]);
