@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import "./ReviewSection.css";
+import CommentSection from "./CommentSection";
 
 const ReviewSection = ({ bookID }) => {
   const [reviews, setReviews] = useState([]);
   const currentUser = auth.currentUser;
+  const [openComments, setOpenComments] = useState({}); // Track which comments are open
+
 
   useEffect(() => {
     const q = query(
@@ -26,6 +29,10 @@ const ReviewSection = ({ bookID }) => {
 
     return () => unsubscribe();
   }, [bookID]);
+
+  const toggleComments = (reviewId) => {
+    setOpenComments((prev) => ({ ...prev, [reviewId]: !prev[reviewId] }));
+  };
 
   // Handle Like/Unlike Review
   const handleLike = async (reviewId, likes) => {
@@ -52,6 +59,8 @@ const ReviewSection = ({ bookID }) => {
       alert("Failed to like/unlike. Try again.");
     }
   };
+
+  
 
   return (
     <div className="review-section-container">
@@ -92,6 +101,14 @@ const ReviewSection = ({ bookID }) => {
             </div>
             
             <p className="review-content">{review.content}</p>
+
+            {/* Comments Button */}
+             <button className="comment-toggle-button" onClick={() => toggleComments(review.id)} >
+              {openComments[review.id] ? "Hide Comments" : "View/Add Comments"}
+            </button>
+
+            {/* Show Comments when toggled */}
+            {openComments[review.id] && <CommentSection reviewId={review.id} />}
           </div>
         ))
       ) : (

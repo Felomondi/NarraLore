@@ -1,0 +1,70 @@
+$primary-color: #e89f2e;
+$white : #fff;
+$black : #000;
+
+.comment-section {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  
+    .comment-card {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+  
+      &:last-child {
+        border-bottom: none;
+      }
+  
+      strong {
+        color: #333;
+      }
+  
+      .comment-date {
+        font-size: 0.8rem;
+        color: #777;
+        margin-left: 10px;
+      }
+    }
+  
+    .comment-input {
+      display: flex;
+      margin-top: 10px;
+  
+      input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+  
+      button {
+        padding: 8px 12px;
+        background-color: $primary-color;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-left: 5px;
+        transition: background 0.2s ease-in-out;
+  
+        &:hover {
+          background-color: $primary-color;
+        }
+      }
+    }
+  
+    .comment-toggle-button {
+      background: none;
+      border: none;
+      color: #007bff;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      transition: color 0.2s ease-in-out;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }

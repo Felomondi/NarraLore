@@ -182,7 +182,6 @@ const Home = () => {
             <span className="benefit">💬 Join the discussion – comment & like reviews.</span>
             <span className="benefit">📱 Coming soon: LitLore for iOS & Android! 🚀</span>
           </p>
-          <button className="cta-button">Start Reading</button>
         </div>
       </div>
 
