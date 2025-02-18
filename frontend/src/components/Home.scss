@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // 🎨 Variables
 $dot-color: rgba(0, 0, 0, 0.1);
 $dot-size: 3px;
@@ -28,6 +30,7 @@ $highlight-color: #e89f2e; // Gold-orange accent color
     border-radius: 12px;
     max-width: 650px;
     animation: fadeIn 1s ease-in-out;
+    
 
     h1 {
       font-size: 2.6rem;
@@ -45,7 +48,8 @@ $highlight-color: #e89f2e; // Gold-orange accent color
 
     h2 {
       font-size: 1.6rem;
-      color: darken($text-color, 10%);
+      // Replaces darken($text-color, 10%) with color.adjust(...)
+      color: color.adjust($text-color, $lightness: -10%);
       font-weight: 600;
       margin-top: 12px;
       text-transform: capitalize;
@@ -74,30 +78,8 @@ $highlight-color: #e89f2e; // Gold-orange accent color
 
       &:hover {
         transform: translateX(5px);
-        color: darken($highlight-color, 10%);
-      }
-    }
-
-    .cta-button {
-      margin-top: 18px;
-      padding: 12px 24px;
-      font-size: 1.1rem;
-      background: linear-gradient(135deg, #e89f2e, #d9841d);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s ease-in-out;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      font-family: 'Merriweather', serif;
-      opacity: 0;
-      animation: fadeInText 1.5s ease-in-out 3s forwards;
-
-      &:hover {
-        background: linear-gradient(135deg, #d9841d, #b96d15);
-        transform: translateY(-2px);
-        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+        // Replaces darken($highlight-color, 10%) with color.adjust(...)
+        color: color.adjust($highlight-color, $lightness: -10%);
       }
     }
   }

@@ -83,6 +83,10 @@ $text-color: black;
   .logout-button {
     border: none;
     background-color: transparent;
+    &:hover {
+      background-color: $primary-color;
+      color: white;
+    }
   }
 }
 

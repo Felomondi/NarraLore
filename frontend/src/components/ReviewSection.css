@@ -198,3 +198,18 @@
     margin-top: 10px;
   }
 }
+
+/* 🟢 Comment Toggle Button */
+.comment-toggle-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  transition: color 0.2s ease-in-out;
+}
+
+.comment-toggle-button:hover {
+  text-decoration: underline;
+}
