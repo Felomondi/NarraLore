@@ -1,15 +1,28 @@
 import axios from 'axios';
 
-const API_BASE = 'http://127.0.0.1:5000/api';
+// ✅ Replace this with your actual Cloud Run URL
+const API_BASE = 'https://books-api-3m5q7pqkgq-uc.a.run.app/api';
 
 export const bookService = {
-  getBooks: async (query, maxResults) => {
-    return axios.get(`${API_BASE}/books`, {
-      params: { query, maxResults }
-    });
+  getBooks: async (query, maxResults = 10) => {
+    try {
+      const response = await axios.get(`${API_BASE}/books`, {
+        params: { query, maxResults }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching books:", error);
+      return [];
+    }
   },
 
   getBookDetails: async (bookId) => {
-    return axios.get(`${API_BASE}/books/${bookId}`);
+    try {
+      const response = await axios.get(`${API_BASE}/books/${bookId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching book details:", error);
+      return null;
+    }
   }
 };
