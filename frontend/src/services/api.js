@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // ✅ Replace this with your actual Cloud Run URL
-const API_BASE = 'https://books-api-3m5q7pqkgq-uc.a.run.app/api';
+const API_BASE = 'https://books-api-3m5q7pqkgq-uc.a.run.app';
 
 export const bookService = {
   getBooks: async (query, maxResults = 10) => {
