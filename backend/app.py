@@ -2,11 +2,14 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["*"]}})
 
 API_KEY = os.getenv("REACT_APP_API_KEY")
+print("Loaded API Key:", API_KEY)
 
 @app.route("/api/books", methods=["GET"])
 def get_books():
