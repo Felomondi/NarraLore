@@ -18,6 +18,18 @@ def get_books():
     response = requests.get(url, params=params)
     return jsonify(response.json().get("items", []))
 
+# ✅ Add the missing book details route
+@app.route("/api/books/<book_id>", methods=["GET"])
+def get_book_details(book_id):
+    url = f"https://www.googleapis.com/books/v1/volumes/{book_id}?key={API_KEY}"
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an error if request fails
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Failed to fetch book details: {str(e)}"}), 404
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
