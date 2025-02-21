@@ -62,7 +62,11 @@ const Home = () => {
     isLoading: isSelfHelpLoading,
   } = useQuery({
     queryKey: ["selfHelpBooks"],
-    queryFn: () => bookService.getBooks("self_help", 10).then((res) => res.data),
+    // queryFn: () => bookService.getBooks("self_help", 10).then((res) => res.data),
+    queryFn: async () => {
+      const response = await bookService.getBooks("self-help", 10);
+      return response;
+    },
     staleTime: CACHE_TTL,
   });
 
@@ -76,14 +80,13 @@ const Home = () => {
     queryKey: ["curatedBooks", selectedCategory],
     // queryFn: () => bookService.getBooks(selectedCategory, 10).then((res) => res.data),
     queryFn: async () => {
-      const response = await bookService.getBooks("self_help", 10);
-      console.log("✅ Self-Help API Response:", response);  // 🔥 Debug
-      return response;  // Remove `.data`
+      const response = await bookService.getBooks("selectedCategory", 10);
+      return response;
     },
     staleTime: CACHE_TTL,
     enabled: !isSearchActive,
   });
-  console.log("📚 Curated Books:", curatedBooks);  // 🔥 
+
 
   // 4. Set up a search query (disabled until manually triggered)
   const {
