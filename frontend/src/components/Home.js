@@ -80,7 +80,7 @@ const Home = () => {
     queryKey: ["curatedBooks", selectedCategory],
     // queryFn: () => bookService.getBooks(selectedCategory, 10).then((res) => res.data),
     queryFn: async () => {
-      const response = await bookService.getBooks("selectedCategory", 10);
+      const response = await bookService.getBooks(selectedCategory, 10);
       return response;
     },
     staleTime: CACHE_TTL,
