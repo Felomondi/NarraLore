@@ -74,7 +74,12 @@ const Home = () => {
     isLoading: isCuratedBooksLoading,
   } = useQuery({
     queryKey: ["curatedBooks", selectedCategory],
-    queryFn: () => bookService.getBooks(selectedCategory, 10).then((res) => res.data),
+    // queryFn: () => bookService.getBooks(selectedCategory, 10).then((res) => res.data),
+    queryFn: async () => {
+      const response = await bookService.getBooks("self_help", 10);
+      console.log("✅ Self-Help API Response:", response);  // 🔥 Debug
+      return response;  // Remove `.data`
+    },
     staleTime: CACHE_TTL,
     enabled: !isSearchActive,
   });
