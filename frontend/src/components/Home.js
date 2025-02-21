@@ -66,6 +66,8 @@ const Home = () => {
     staleTime: CACHE_TTL,
   });
 
+  console.log("📚 Self-Help Books:", selfHelpBooks);  // 🔥 Log API response
+
   // 3. Fetch Curated Books (depends on selectedCategory)
   const {
     data: curatedBooks = [],
@@ -76,6 +78,7 @@ const Home = () => {
     staleTime: CACHE_TTL,
     enabled: !isSearchActive,
   });
+  console.log("📚 Curated Books:", curatedBooks);  // 🔥 
 
   // 4. Set up a search query (disabled until manually triggered)
   const {
