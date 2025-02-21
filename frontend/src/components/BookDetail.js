@@ -26,7 +26,7 @@ const BookDetail = () => {
     const fetchBookDetails = async () => {
       try {
         const response = await bookService.getBookDetails(bookID);
-        setBook(response.data);
+        setBook(response);
       } catch (err) {
         setError(err.message);
       }
