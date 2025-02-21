@@ -7,7 +7,6 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["*"]}})
 
 API_KEY = os.getenv("REACT_APP_API_KEY")
-print(f"🔍 API_KEY Loaded: {API_KEY}")  # Debugging log
 
 @app.route("/api/books", methods=["GET"])
 def get_books():
