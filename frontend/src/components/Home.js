@@ -95,9 +95,14 @@ const Home = () => {
     isLoading: isSearchLoading,
   } = useQuery({
     queryKey: ["searchBooks", searchQuery],
-    queryFn: () =>
-      bookService.getBooks(encodeURIComponent(searchQuery), 10).then((res) => res.data),
-    enabled: false,
+    queryFn: async () => {
+      if (!searchQuery.trim()) return []; // Prevent empty API calls
+      console.log(`🔍 Searching for: ${searchQuery}`); // Debugging
+      const response = await bookService.getBooks(searchQuery, 10);
+      console.log("✅ Search API Response:", response);
+      return response;
+    },
+    enabled: false, // It should only run when manually triggered
     staleTime: CACHE_TTL,
   });
 
@@ -147,16 +152,16 @@ const Home = () => {
     }
   }, [curatedBooks]);
 
-  // Search handler
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setIsSearchActive(false);
       return;
     }
+    
     setIsSearchActive(true);
-    await refetchSearch();
-    // Optionally fetch ratings and comments for searchResults once available
-    fetchAverageRatingsAndComments(searchResults);
+    await refetchSearch(); // ✅ Manually triggers the search API call
+    fetchAverageRatingsAndComments(searchResults); // 🚀 Fetch ratings and comments
   };
 
   // Handler for clicking a curated category
