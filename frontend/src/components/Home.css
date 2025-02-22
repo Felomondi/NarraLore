@@ -445,7 +445,13 @@
        margin-top: 60px;
      }
   */
-
+  .curated-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    justify-content: center; /* Centers items if there's space */
+    grid-template-columns: repeat(2, 1fr);
+  }
   /* Further reduce hero title for phones */
   .homepage-container h1 {
     font-size: 2em;
@@ -477,8 +483,14 @@
   }
 
   /* Curated cards smaller */
+  /* .curated-card {
+    flex: 0 0 160px;
+  } */
+
   .curated-card {
-    flex: 0 0 160px; /* was 200px */
+    width: 100%; /* Ensures cards scale properly */
+    max-width: 200px; /* Optional max width */
+    margin: auto; /* Centers within grid */
   }
 
   /* Possibly reduce .search-bar width */
